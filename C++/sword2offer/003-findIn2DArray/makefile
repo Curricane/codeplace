@@ -1,5 +1,5 @@
 CC       = g++
-CFLAGS   = -Wall -g -O -fPIC
+CFLAGS   = -std=c++11 -Wall -g -O -fPIC
 CXXFLAGS = 
 INCLUDE  = -I .
 TARGET   = 
@@ -15,12 +15,16 @@ SRCS     = \
 
 BIN = divide-rightup
 
-# if below code exists, it will not generate $(BIN)
-# $(OBJS):$(SRCS)
-# 	$(CC) $(CFLAGS) $(INCLUDE) -c $(SRCS)
 
-$(BIN):$(OBJS)
+
+# makefile uses the first command as the final command, equivalent to the main function in c.
+$(OBJS):$(SRCS)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $(SRCS)
+
+# this command should behind the main command
+install:$(OBJS)
 	$(CC) -o $(BIN) $(OBJS)
 
 clean:
 	rm -f *.o
+	rm $(BIN)
