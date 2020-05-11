@@ -8,6 +8,8 @@
 #include <exception>
 #include <cstdio>
 
+/* error 
+// 
 int Min_v1(int* numbers, int length)
 {
     if (nullptr == numbers || length <= 0)
@@ -25,7 +27,7 @@ int Min_v1(int* numbers, int length)
     while(l <= r)
     {
         int mid = l + (r - l) / 2;
-        if (numbers[mid] <= min)
+        if (numbers[mid] <= min) // because you use min ,it is diffirent to normal divisive;cause some num for get to compare
         {
             min = numbers[mid];
             r = r - 1;
@@ -37,6 +39,43 @@ int Min_v1(int* numbers, int length)
     }
 
     return min;
+}
+*/
+
+int Min_v1(int* numbers, int length)
+{
+    if (nullptr == numbers || length <= 0)
+    {
+        throw -1;
+    }
+ 
+    int l = 0;
+    int r = length - 1;
+    int mid = l;
+    
+    while( l <= r && numbers[l] >= numbers[r] )
+    {
+        if(r - l <= 1)
+        {
+            mid = r;
+            break;
+        }
+        mid = l + ((r - l) >> 1);
+        if (numbers[mid] == numbers[r] && numbers[mid] == numbers[l])
+        {
+            --r; //dont know minest one in which side,find it one by one from right to lefr
+        }
+        else if (numbers[mid] <= numbers[r])
+        {
+            r = mid;
+        } 
+        else 
+        {
+            l = mid;
+        }
+    }
+
+    return numbers[mid];
 }
 
 // ====================测试代码====================
@@ -96,6 +135,14 @@ int main(int argc, char* argv[])
 
     // 输入nullptr
     Test(nullptr, 0, 0);
+
+    // 
+    int array7[] = {1, 1, 1, 1, 1, 1, 1 ,1 , 0, 1 };
+    Test(array7, sizeof(array7) / sizeof(int), 0);
+
+    // 数组中只有一个数
+    int array8[] = {1, 1, 1, 1, 1, 1, 1 ,1 , 1, 1 };
+    Test(array8, sizeof(array8) / sizeof(int), 1);
 
     return 0;
 }
