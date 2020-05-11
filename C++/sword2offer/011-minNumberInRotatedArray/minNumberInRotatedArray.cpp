@@ -53,7 +53,7 @@ int Min_v1(int* numbers, int length)
     int r = length - 1;
     int mid = l;
     
-    while( l <= r && numbers[l] >= numbers[r] )
+    while( numbers[l] >= numbers[r] )
     {
         if(r - l <= 1)
         {
@@ -145,4 +145,24 @@ int main(int argc, char* argv[])
     Test(array8, sizeof(array8) / sizeof(int), 1);
 
     return 0;
+}
+
+int bsearch(int a[], int n, int value)
+{
+    int low = 0;
+    int hight = n-1;
+
+    while( low <= hight)
+    {
+        int mid = low + ((hight - low) >> 1);
+        if (a[mid] == value)
+            return mid;
+        else if (a[mid] < value)
+            low = mid + 1;
+        else
+        {
+            hight = mid - 1;
+        } 
+    }
+    return -1;
 }
