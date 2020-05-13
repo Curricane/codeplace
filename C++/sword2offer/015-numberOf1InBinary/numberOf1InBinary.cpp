@@ -27,6 +27,19 @@ int NumberOf1_Solution1(int n)
     return count;
 }
 
+int NumberOf1_Solution2(int n)
+{
+    int count = 0;
+    while(n)
+    {
+        ++ count;
+
+        // n - 1， 让最右边的 1 变为 0， 而其他的位置保持不变
+        n = (n - 1) & n;
+    }
+    return count;
+}
+
 string decimal2Binary(int n)
 {
     // 如果用char数组转化为string，最后一个值要为'\0'不然会出问题
@@ -70,6 +83,15 @@ void Test(int n, unsigned int expected)
     else
     {
         printf("Solution1: Test for %X failed.\n", n);
+    }
+
+    int actual1 = NumberOf1_Solution2(n);
+    if (actual1 == expected)
+        //printf("Solution1: Test for %X passed.\n", n);
+        cout << "Solution2: Test for " << decimal2Binary(n) << " passed get ones: " << actual1 << endl;
+    else
+    {
+        printf("Solution2: Test for %X failed.\n", n);
     }
     
 }
