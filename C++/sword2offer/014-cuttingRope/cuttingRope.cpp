@@ -91,6 +91,27 @@ int maxProductAfterCutting_Dynamic1(int length)
     return max;
 }
 
+// =============Greedy algorithm======
+// 使用Greedy algorithm 需要用数学证明 这个贪婪的选择是正确的
+int maxProductAfterCutting_Greedy(int length)
+{
+    if (length < 2)
+        return 0;
+    if (length == 2)
+        return 1;
+    if (length == 3)
+        return 2;
+
+    // 尽可能多地减少长度为3的绳子
+    int timesOf3 = length / 3;
+    if (length - timesOf3 * 3 == 1)
+        timesOf3 -= 1;
+    
+    int timesOf2 = (length - timesOf3 * 3) / 2;
+
+    return (int) (pow(3, timesOf3)) * (int) (pow(2, timesOf2));
+}
+
 // ==============测试代码============
 void test(const char* testName, int length, int expectd)
 {
@@ -104,13 +125,23 @@ void test(const char* testName, int length, int expectd)
     }
 
     int result2 = maxProductAfterCutting_Dynamic1(length);
-    if (result1 == expectd)
+    if (result2 == expectd)
         cout << "_Dynamic1 for " << testName << " passed." << endl;
     else
     {
         cout << "_Dynamic1 for " << testName << " failed we expected " 
         << expectd << " you get " << result2 << endl;
     }
+
+    int result3 = maxProductAfterCutting_Greedy(length);
+    if (result3 == expectd)
+        cout << "_Greedy for " << testName << " passed." << endl;
+    else
+    {
+        cout << "_Greedy for " << testName << " failed we expected " 
+        << expectd << " you get " << result3 << endl;
+    }
+    cout << "========================================" << endl;
 }
 
 void test1()
