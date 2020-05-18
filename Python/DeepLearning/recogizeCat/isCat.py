@@ -92,7 +92,7 @@ def trainModel(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig):
     
     y_pred = isCat.predict(test_set_x)
     acc = isCat.getAcc(y_pred, test_set_y_orig)
-    print("acc: ", acc) 
+    print("test acc: ", acc) 
     
     with open('model.txt', 'w') as f:
         f.write(",".join([str(x) for x in isCat.weights[0]]))
@@ -130,7 +130,7 @@ def predict(test_set_x, test_set_y_orig):
     y_pred = isCat.predict(test_set_x)
     
     acc = isCat.getAcc(y_pred, test_set_y_orig)
-    print("acc: ", acc)
+    return acc
     # for x in range(test_set_x.shape[1]):
     #     # 这样做并不能打印出图片
     #     #plt.imshow(test_set_x_orig[x])
@@ -147,7 +147,12 @@ if __name__ == '__main__':
 
     costs = trainModel(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig)
     #showcost(costs, 0.01)
-    predict(test_set_x, test_set_y_orig)
+    acc = predict(train_set_x, train_set_y_orig)
+    print("trian acc: ", acc)
+    acc = predict(test_set_x, test_set_y_orig)
+    print("test acc: ", acc)
+    
+
     
     
     
