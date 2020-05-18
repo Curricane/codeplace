@@ -18,6 +18,13 @@ def deriv_relu(x):
     x[x>0] = 1
     return x
 
+def tanh(x):
+    return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
+
+def deriv_tanh(x):
+    a = tanh(x)
+    return 1 - a * a
+
 
 def loss_func(a, y):
     return -y * np.log(a) - (1 - y) * np.log(1 - a)
@@ -64,9 +71,10 @@ class Network:
         return a0
 
     def cost_func(self, a, y):
-        assert(a.shape == y.shape)
-        m = a.shape[1]
-        return np.sum(loss_func(a, y), axis=1, keepdims=True) / m
+        # assert(a.shape == y.shape)
+        # m = a.shape[1]
+        # return np.sum(loss_func(a, y), axis=1, keepdims=True) / m
+        return np.mean(-np.sum(y*np.log(a), axis=1, keepdims=True))
 
     def deriv_cost_func(self, a, y):
         return deriv_loss_func(a, y)
@@ -167,12 +175,17 @@ if __name__ == '__main__':
     train_set_x = train_set_x / 255
     test_set_x = test_set_x / 255
 
+    fig = None
+    ax = None
+
     n_input = train_set_x.shape[0]
     
-    nodes = [n_input, 1]
-    actives = [(relu, deriv_relu),(sigmoid, deriv_sigmoid)]
+    nodes = [n_input, 8, 16,  1]
+    actives = [(relu, deriv_relu), (tanh, deriv_tanh) ,(sigmoid, deriv_sigmoid)]
     isCatNet = Network(nodes, actives)
-    costs_test, costs_trian = isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=60000)
+    epochs = 15000
+    lRate = 0.01
+    costs_test, costs_trian = isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=epochs, lRate=lRate)
     #isCatNet.saveParams2H5()
     y_pred_train = isCatNet.predict(train_set_x)
     acc = isCatNet.getAcc(y_pred_train, train_set_y_orig)
@@ -184,10 +197,11 @@ if __name__ == '__main__':
 
     costs_test = np.squeeze(costs_test)
     costs_trian = np.squeeze(costs_trian)
-
-    fig, ax = plt.subplots()
-    ax.plot(costs_test, label="test")
-    ax.plot(costs_trian, label="train")
+    
+    if not fig:
+        fig, ax = plt.subplots()
+    ax.plot(costs_test, label="test" + str(epochs) + "-lRate" + str(lRate))
+    ax.plot(costs_trian, label="train" + str(epochs) + "-lRate" + str(lRate))
     ax.set_xlabel('epoches / hundreds')
     ax.set_ylabel('costs')
     ax.legend()
