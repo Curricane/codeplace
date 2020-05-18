@@ -1,5 +1,6 @@
 import numpy as np 
 from  lrUtils import load_dataset
+import matplotlib.pyplot as plt
 
 def sigmoid(x):
     return 1 / (1+np.exp(-x))
@@ -8,6 +9,15 @@ def deriv_sigmoid(x):
     a = sigmoid(x)
     return a * (1 - a)
 
+def relu(x):
+    return np.maximum(x, 0).reshape(x.shape[0], x.shape[1])
+
+def deriv_relu(x):
+    x = relu(x)
+    x[x>0] = 1
+    return x
+
+
 def loss_func(a, y):
     return -y * np.log(a) - (1 - y) * np.log(1 - a)
 
@@ -15,14 +25,21 @@ def deriv_loss_func(a, y):
     return -y / a + (1 - y) / (1 - a)
 
 class Network:
-    def __init__(self, weights, biases):
-        assert(len(weights) == len(biases))
-        
-        for i in range(len(weights)):
-            assert(weights[i].shape[0] == biases[i].shape[0])
-        self.layers = len(weights) # 神经网络层数，不计输入层，第一隐层为第0层
+    def __init__(self, nodes, actives):
+        assert(len(nodes) - 1 == len(actives))
+        self.layers = len(nodes) - 1
+        weights = []
+        biases = []
+        for l in range(1, self.layers + 1):
+            w1 = np.random.rand(nodes[l], nodes[l-1]) * 0.001
+            b1 = np.random.rand(nodes[l], 1) * 0.001
+            weights.append(w1)
+            biases.append(b1)
         self.weights = weights
         self.biases = biases
+        self.actives = actives # 用于存放每一层的激活函数 和其导数(active_func, deriv_func)
+
+        
 
     def feedforword(self, a0):
         assert( a0.shape[0] == self.weights[0].shape[1])
@@ -31,17 +48,18 @@ class Network:
         Z = []
         Z.append(np.array(0).reshape(1,1)) # 仅用来填充
         l = 0
-        for w, b in zip(self.weights, self.biases):
+        for w, b , active in zip(self.weights, self.biases, self.actives):
             z = np.dot(w, A[l]).reshape(w.shape[0], A[l].shape[1]) + b
-            a = sigmoid(z)
+            # a = sigmoid(z)
+            a = active[0](z)
             A.append(a)
             Z.append(z)
             l += 1
         return (Z, A) 
 
     def forward(self, a0):
-        for b, w in zip(self.biases, self.weights):
-            a0 = sigmoid(np.dot(w, a0) + b) #上一层的输出，作为下一层的输入 a
+        for w, b , active in zip(self.weights, self.biases, self.actives):
+            a0 = active[0](np.dot(w, a0) + b) #上一层的输出，作为下一层的输入 a
         return a0
 
     def cost_func(self, a, y):
@@ -62,7 +80,8 @@ class Network:
         dal = self.deriv_cost_func(A[self.layers], y)
         dA[self.layers] = dal
         for l in range(self.layers, 0, -1):
-            dZl = dA[l] * deriv_sigmoid(Z[l])
+            #dZl = dA[l] * deriv_sigmoid(Z[l])
+            dZl = dA[l] * self.actives[l-1][1](Z[l])
             dZ[l] = dZl
             dWl =  np.dot(dZ[l], A[l-1].T) / m
             dW[l] = dWl
@@ -72,7 +91,8 @@ class Network:
                 dA[l-1] = np.dot(self.weights[l-1].T, dZ[l])
         return dW[1:], dB[1:]
 
-    def train(self, training_data_x, training_data_y, test_data_x, test_data_y, lRate = 0.001, epochs = 4000 ):
+    def train(self, training_data_x, training_data_y, test_data_x, test_data_y, lRate = 0.01, epochs = 10000 ):
+        costs_test = []
         costs = []
         for epoch in range(epochs):
             dW, dB = self.backprop(training_data_x, training_data_y)
@@ -82,12 +102,14 @@ class Network:
                 self.biases[l] -= lRate * dB[l]
 
             if epoch % 100 == 0:
-                # Z, A = self.feedforword(test_data_x)
-                # cost = self.cost_func(A[self.layers], test_data_y)
+                Z_test, A_test = self.feedforword(test_data_x)
+                cost_test = self.cost_func(A_test[self.layers], test_data_y)
                 Z, A = self.feedforword(training_data_x)
-                cost = self.cost_func(A[self.layers], training_data_y)
-                costs.append(cost)
-                print("{0} cost is: {1}".format(epoch, cost))
+                cost_train = self.cost_func(A[self.layers], training_data_y)
+                costs.append(cost_train)
+                costs_test.append(cost_test)
+                print("{0} test cost is: {1} trian cost is {2}".format(epoch, cost_test, cost_train))
+        return (costs_test, costs)
     
     def predict(self, x):
         m = x.shape[1]
@@ -110,21 +132,23 @@ if __name__ == '__main__':
 
     n_input = train_set_x.shape[0]
     
-    w1 = np.random.rand(16, n_input) * 0.001
-    w2 = np.random.rand(8, 16) * 0.001
-    w3 = np.random.rand(4, 8) * 0.001
-    w4 = np.random.rand(1, 4) * 0.001
-    weights = [w1, w2, w3, w4]
+    # w1 = np.random.rand(16, n_input) * 0.001
+    # w2 = np.random.rand(8, 16) * 0.001
+    # w3 = np.random.rand(4, 8) * 0.001
+    # w4 = np.random.rand(1, 4) * 0.001
+    # weights = [w1, w2, w3, w4]
 
-    b1 = np.random.rand(16, 1) * 0.001
-    b2 = np.random.rand(8, 1) * 0.001
-    b3 = np.random.rand(4, 1) * 0.001
-    b4 = np.random.rand(1, 1) * 0.001
-    biases = [b1, b2, b3, b4]
+    # b1 = np.random.rand(16, 1) * 0.001
+    # b2 = np.random.rand(8, 1) * 0.001
+    # b3 = np.random.rand(4, 1) * 0.001
+    # b4 = np.random.rand(1, 1) * 0.001
+    # biases = [b1, b2, b3, b4]
     # weights = [np.random.rand(1, n_input) * 0.001]
     # biases = [np.random.rand(1,1) * 0.001]
-    isCatNet = Network(weights, biases)
-    isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig)
+    nodes = [n_input, 8,4,1]
+    actives = [(relu, deriv_relu), (relu, deriv_relu), (sigmoid, deriv_sigmoid)]
+    isCatNet = Network(nodes, actives)
+    costs_test, costs_trian = isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=100000)
     y_pred_train = isCatNet.predict(train_set_x)
     acc = isCatNet.getAcc(y_pred_train, train_set_y_orig)
     print("train acc: ", acc) 
@@ -132,6 +156,18 @@ if __name__ == '__main__':
     y_pred_test = isCatNet.predict(test_set_x)
     acc = isCatNet.getAcc(y_pred_test, test_set_y_orig)
     print("test acc: ", acc) 
+
+    costs_test = np.squeeze(costs_test)
+    costs_trian = np.squeeze(costs_trian)
+
+    fig, ax = plt.subplots()
+    ax.plot(costs_test, label="test")
+    ax.plot(costs_trian, label="train")
+    ax.set_xlabel('epoches / hundreds')
+    ax.set_ylabel('costs')
+    ax.legend()
+    fig.show()
+
 
 
 
