@@ -1,6 +1,7 @@
 import numpy as np 
 from  lrUtils import load_dataset
 import matplotlib.pyplot as plt
+import h5py
 
 def sigmoid(x):
     return 1 / (1+np.exp(-x))
@@ -122,6 +123,42 @@ class Network:
     def getAcc(self, y_pred, y_true):
         assert(y_pred.shape == y_true.shape)
         return 1 - np.mean(np.abs(y_pred - y_true))
+
+    def saveParams2H5(self, path='./model.h5'):
+        f = h5py.File(path, 'w')
+        f.create_dataset('layers', data=self.layers)
+        for i in range(self.layers):
+            key = 'w' + str(i)
+            f.create_dataset(key, data=self.weights[i])
+            key = 'b' + str(i)
+            dset = f.create_dataset(key, data=self.biases[i])
+        actives = np.zeros((1, self.layers))
+        i = 0
+        for x in self.actives:
+            if str(x[0]) == 'relu':
+                actives[0, i] = 1
+            i += 1
+        f.create_dataset('actives', data=actives)
+
+    """
+    # 取出还有问题
+    def initFromH5(self, path='./model.h5'):
+        f = h5py.File(path, 'r')
+        self.layers = f['layers'][0, 0]
+        i = 0
+        for x in range(self.layers):
+            key1 = 'w' + str(x)
+            key2 = 'b' + str(x)
+            self.weights[x] = f[key1]
+            self.biases[x] = f[key2]
+        actives = f['actives']
+        for x in actives:
+            if x == 0:
+                self.actives[i] = (sigmoid, deriv_sigmoid)
+            elif x == 1:
+                self.actives[i] = (relu, deriv_relu)
+            i += 1
+    """
     
 if __name__ == '__main__':
     train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes = load_dataset()
@@ -132,23 +169,11 @@ if __name__ == '__main__':
 
     n_input = train_set_x.shape[0]
     
-    # w1 = np.random.rand(16, n_input) * 0.001
-    # w2 = np.random.rand(8, 16) * 0.001
-    # w3 = np.random.rand(4, 8) * 0.001
-    # w4 = np.random.rand(1, 4) * 0.001
-    # weights = [w1, w2, w3, w4]
-
-    # b1 = np.random.rand(16, 1) * 0.001
-    # b2 = np.random.rand(8, 1) * 0.001
-    # b3 = np.random.rand(4, 1) * 0.001
-    # b4 = np.random.rand(1, 1) * 0.001
-    # biases = [b1, b2, b3, b4]
-    # weights = [np.random.rand(1, n_input) * 0.001]
-    # biases = [np.random.rand(1,1) * 0.001]
-    nodes = [n_input, 8,4,1]
-    actives = [(relu, deriv_relu), (relu, deriv_relu), (sigmoid, deriv_sigmoid)]
+    nodes = [n_input, 1]
+    actives = [(relu, deriv_relu),(sigmoid, deriv_sigmoid)]
     isCatNet = Network(nodes, actives)
-    costs_test, costs_trian = isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=100000)
+    costs_test, costs_trian = isCatNet.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=60000)
+    #isCatNet.saveParams2H5()
     y_pred_train = isCatNet.predict(train_set_x)
     acc = isCatNet.getAcc(y_pred_train, train_set_y_orig)
     print("train acc: ", acc) 
