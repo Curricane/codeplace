@@ -59,10 +59,10 @@ class IsCatNet:
             self.biases -= lRate * db
 
             if epoch % 100 == 0:
-                # t_a = self.feedforward(test_data_x)
-                # cost = self.cost_func(t_a, test_data_y)
-                t_a = self.feedforward(training_data_x)
-                cost = self.cost_func(t_a, training_data_y)
+                t_a = self.feedforward(test_data_x)
+                cost = self.cost_func(t_a, test_data_y)
+                # t_a = self.feedforward(training_data_x)
+                # cost = self.cost_func(t_a, training_data_y)
                 costs.append(cost)
                 print("{0} cost is: {1}".format(epoch, cost))
         
@@ -74,8 +74,11 @@ class IsCatNet:
         A = self.feedforward(x)
         for i in range(A.shape[1]):
             y_pred[0, i] = 1 if A[0,i] > 0.5 else 0
-        assert(y_pred.shape == (1, m))
         return y_pred
+
+    def getAcc(self, y_pred, y_true):
+        assert(y_pred.shape == y_true.shape)
+        return 1 - np.mean(np.abs(y_pred - y_true))
 
 def trainModel(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig):
     
@@ -84,21 +87,18 @@ def trainModel(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig):
     biases = np.random.rand(1,1) * 0.001
     lRate = 0.01
     isCat = IsCatNet(weights, biases)
-    costs = isCat.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=40000)
-    costs_squeeze = np.squeeze(costs)
+    costs = isCat.train(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig, epochs=2000)
+    #costs_squeeze = np.squeeze(costs)
     
     y_pred = isCat.predict(test_set_x)
-    totle = y_pred.shape[1]
-    assert(y_pred.shape == test_set_y_orig.shape)
-    result = [x == y for x, y in zip(y_pred, test_set_y_orig)]
-    print(result)
-    return costs
+    acc = isCat.getAcc(y_pred, test_set_y_orig)
+    print("acc: ", acc) 
     
- 
     with open('model.txt', 'w') as f:
         f.write(",".join([str(x) for x in isCat.weights[0]]))
         f.write('\n')
         f.write(str(isCat.biases[0,0]))
+    return costs
 
 def showcost(costs, lRate):
     fig, axe = plt.subplots()
@@ -112,7 +112,7 @@ def showcost(costs, lRate):
     
     
 
-def predict(test_set_x):
+def predict(test_set_x, test_set_y_orig):
     weights_get = []
     biases_get = 0.0
     with open('model.txt', 'r') as f:
@@ -126,14 +126,17 @@ def predict(test_set_x):
     weights = np.array(weights_get).reshape(1, len(weights_get))
     biases = np.array(biases_get).reshape(1, 1)
     #plt.imshow(test_set_x_orig[0])
-    iscat = IsCatNet(weights, biases)
+    isCat = IsCatNet(weights, biases)
+    y_pred = isCat.predict(test_set_x)
     
-    for x in range(test_set_x.shape[1]):
-        # 这样做并不能打印出图片
-        plt.imshow(test_set_x_orig[x])
-        time.sleep(2)
-        result = iscat.predict(test_set_x[:,x].reshape(-1, 1))
-        print(x, result)
+    acc = isCat.getAcc(y_pred, test_set_y_orig)
+    print("acc: ", acc)
+    # for x in range(test_set_x.shape[1]):
+    #     # 这样做并不能打印出图片
+    #     #plt.imshow(test_set_x_orig[x])
+    #     time.sleep(2)
+    #     result = iscat.predict(test_set_x[:,x].reshape(-1, 1))
+    #     print(x, result)
 
 if __name__ == '__main__':
     train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes = load_dataset()
@@ -143,8 +146,8 @@ if __name__ == '__main__':
     test_set_x = test_set_x / 255
 
     costs = trainModel(train_set_x, train_set_y_orig, test_set_x, test_set_y_orig)
-    showcost(costs, 0.01)
-    predict(test_set_x)
+    #showcost(costs, 0.01)
+    predict(test_set_x, test_set_y_orig)
     
     
     
