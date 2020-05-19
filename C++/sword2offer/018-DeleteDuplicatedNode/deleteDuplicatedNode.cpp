@@ -7,6 +7,61 @@
 
 #include <cstdio>
 
+// 只要节点重复了，删除全部重复的节点，一个不留
+void DeleteDuplication(ListNode** pHead)
+{
+    if (nullptr == pHead || nullptr == *pHead)
+    {
+        return;
+    }
+
+    //位于重复节点的前一个节点
+    ListNode *pPreNode = nullptr;
+
+    //重复节点的第一个节点
+    ListNode *pNode = *pHead;
+
+    while (pNode != nullptr)
+    {
+        ListNode *pNext = pNode->m_pNext;
+        bool isNeed2Del = false;
+        if (pNext != nullptr && pNode->m_nValue == pNext->m_nValue) // 重复节点
+        {
+            isNeed2Del = true;
+        }
+
+        if (isNeed2Del)
+        {
+            int value = pNode->m_nValue; // 记录重复节点的值，用于判断删除最后一个重复节点
+            ListNode *pToDel = pNode;
+            while (pToDel != nullptr && pToDel->m_nValue == value) // 从第一个节点开始删除
+            {
+                pNext = pToDel->m_pNext;
+                delete pToDel;
+                pToDel = nullptr;
+                pToDel = pNext;
+            }
+            if(pPreNode == nullptr) // 开头就有重复节点，链头移到下一个值节点
+            {
+                *pHead = pNext;
+            }
+            else
+            {
+                pPreNode->m_pNext = pNext; // 链上，保持节点完整，始终位于pNode之前
+            }
+            pNode = pNext;
+        }
+        else // 不是重复节点，判断下两个节点
+        {
+            pPreNode = pNode;
+            pNode = pNode->m_pNext;
+        }
+        
+    }
+    
+}
+
+// 去掉重复节点, 只保留一个
 void DeleteDuplicationAndSaveOne(ListNode** pHead)
 {
     if (nullptr == pHead || nullptr == *pHead)
