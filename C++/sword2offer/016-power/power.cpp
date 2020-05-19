@@ -7,6 +7,7 @@
 bool g_InvalidInput = false;
 bool equal(double num1, double num2);
 double PowerWithUnsignedExponent(double base, unsigned int exponent);
+double PowerWithUnsignedExponent2(double base, unsigned int exponent);
 
 double Power(double base, int exponent)
 {
@@ -22,7 +23,7 @@ double Power(double base, int exponent)
     if (exponent < 0)
         absExponent = (unsigned int) (-exponent);
     
-    double result = PowerWithUnsignedExponent(base, absExponent);
+    double result = PowerWithUnsignedExponent2(base, absExponent);
     if (exponent < 0)
         result = 1.0 / result;
 
@@ -36,6 +37,26 @@ double PowerWithUnsignedExponent(double base, unsigned int exponent)
     for (int i = 1; i <= exponent; ++i)
         result *= base;
     return result;
+}
+
+double PowerWithUnsignedExponent2(double base, unsigned int exponent)
+{
+    if (exponent == 0)
+        return 1;
+    if (exponent == 1)
+        return base;
+    double result = base;
+    while ((exponent >> 1) >= 1)
+    {
+        result *= result;
+        exponent = exponent >> 1;
+    }
+    
+    if ((exponent & 0x1) == 1) // 指数是奇数
+        result *= base;
+    
+    return result;
+
 }
 
 bool equal(double num1, double num2)
