@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <mutex>
 
 using std::string;
 using std::vector;
@@ -17,18 +18,25 @@ public:
 class Subject
 {
 public:
-    virtual void attach(std::shared_ptr<Observer> obs) = 0;
-    virtual void detach(std::shared_ptr<Observer> obs) = 0;
+    virtual void attach(Observer* obs) = 0;
+    virtual void detach(Observer* obs) = 0;
     virtual void notify() = 0;
 };
 
 class Hero: public Observer
 {
 public:
-    Hero(string name, std::shared_ptr<Subject> pSub)
+    Hero(string name, Subject* pSub)
     {
         this->name = name;
         m_pSub = pSub;
+        m_pSub->attach(this);
+    }
+    ~Hero()
+    {
+        cout << "再见，" << name << "去也！" << endl;
+        m_pSub->detach(this);
+        
     }
     void attack()
     {
@@ -51,7 +59,7 @@ public:
     string name;
 
 private:
-    std::shared_ptr<Subject> m_pSub;
+    Subject *m_pSub;
 
 };
 
@@ -60,16 +68,17 @@ private:
 class ControlCenter: public Subject
 {
 public:
-    vector<std::shared_ptr<Observer> > mObs;
+    vector<Observer*> mObs;
 
-    void  attach(std::shared_ptr<Observer> obs)
+    void  attach(Observer *obs)
     {
         mObs.push_back(obs);
     }
 
-    void detach(std::shared_ptr<Observer> obs)
+    void detach(Observer* obs)
     {
-        vector<std::shared_ptr<Observer> >::iterator iter = std::find(mObs.begin(), mObs.end(), obs);
+        std::lock_guard<std::mutex> guard(mMutex);
+        vector<Observer*>::iterator iter = std::find(mObs.begin(), mObs.end(), obs);
         mObs.erase(iter);
     }
 
@@ -82,21 +91,24 @@ public:
     }
 
     ControlCenter(){};
+private:
+    std::mutex mMutex;
 };
 
 int main()
 {
-    std::shared_ptr<ControlCenter> center = std::make_shared<ControlCenter>();
+    ControlCenter *center = new ControlCenter();
     std::shared_ptr<Hero> js = std::make_shared<Hero>("剑圣", center);
     std::shared_ptr<Hero> jj = std::make_shared<Hero>("剑姬", center);
     std::shared_ptr<Hero> gl = std::make_shared<Hero>("盖伦", center);
     std::shared_ptr<Hero> zx = std::make_shared<Hero>("赵信", center);
     std::shared_ptr<Hero> hz = std::make_shared<Hero>("皇子", center);
-    center->attach(std::static_pointer_cast<Observer>(js));
-    center->attach(std::static_pointer_cast<Observer>(jj));
-    center->attach(std::static_pointer_cast<Observer>(gl));
-    center->attach(std::static_pointer_cast<Observer>(zx));
-    center->attach(std::static_pointer_cast<Observer>(hz));
+    // center->attach(std::static_pointer_cast<Observer>(js));
+    // center->attach(std::static_pointer_cast<Observer>(jj));
+    // center->attach(std::static_pointer_cast<Observer>(gl));
+    // center->attach(std::static_pointer_cast<Observer>(zx));
+    // center->attach(std::static_pointer_cast<Observer>(hz));
 
     hz->injured();
+    // center->detach(hz);
 }
