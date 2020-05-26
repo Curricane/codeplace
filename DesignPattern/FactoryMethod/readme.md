@@ -6,7 +6,7 @@
 - 具体工厂子类
 - 产品接口
 - 具体产品子类
-![工厂方法结构图](https://github.com/Curricane/codeplace/blob/master/DesignPattern/FactoryMethod/\345\267\245\345\216\202\346\226\271\346\263\225\346\250\241\345\274\217\347\273\223\346\236\204\345\233\276.png)
+![工厂方法结构图](https://github.com/Curricane/codeplace/blob/master/DesignPattern/FactoryMethod/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F%E7%BB%93%E6%9E%84%E5%9B%BE.png)
 # 总结
 - 优点
 -- 遵循”单一职责原则“，把创建具体类的职责移动到了工厂。
