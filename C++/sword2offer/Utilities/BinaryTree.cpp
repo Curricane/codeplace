@@ -188,9 +188,11 @@ void PrintWithSpaces(int num)
 
 bool isEqual(BinaryTreeNode *A, BinaryTreeNode *B)
 {
-    if(nullptr == B)
+    if(nullptr == B && nullptr == A)
         return true;
     if(nullptr == A && B != nullptr)
+        return false;
+    if(nullptr != A && nullptr == B)
         return false;
     return A->m_nValue == B->m_nValue && isEqual(A->m_pLeft, B->m_pLeft) && isEqual(A->m_pRight, B->m_pRight);
 };
