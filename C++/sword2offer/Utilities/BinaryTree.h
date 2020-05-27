@@ -27,3 +27,4 @@ void PrintTree(const BinaryTreeNode* pRoot);
 void DestroyTree(BinaryTreeNode* pRoot);
 
 BinaryTreeNode* CreateBinaryTreeByArray(std::vector<int> a);
+bool isEqual(BinaryTreeNode *A, BinaryTreeNode *B);

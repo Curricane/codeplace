@@ -185,3 +185,12 @@ void PrintWithSpaces(int num)
     for(int i = 0; i< num; ++i)
         std::cout << "  ";
 }
+
+bool isEqual(BinaryTreeNode *A, BinaryTreeNode *B)
+{
+    if(nullptr == B)
+        return true;
+    if(nullptr == A && B != nullptr)
+        return false;
+    return A->m_nValue == B->m_nValue && isEqual(A->m_pLeft, B->m_pLeft) && isEqual(A->m_pRight, B->m_pRight);
+};
