@@ -37,6 +37,8 @@ bool isSymmerical(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2)
     if (pRoot1->m_nValue != pRoot2->m_nValue)
         return false;
     
+    // 从一开始就把树劈成两半对称比较
+    // 比较左边树的左节点 与 右边树的右节点; 左边树的右节点 与 右边树的左节点
     return isSymmerical(pRoot1->m_pLeft, pRoot2->m_pRight) 
         && isSymmerical(pRoot1->m_pRight, pRoot2->m_pLeft);
 }
