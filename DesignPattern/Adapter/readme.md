@@ -4,6 +4,7 @@
 ## 分类
 - 对象适配器模式
 > 适配器与适配者之间是关联关系。
+![对象适配器模式](https://github.com/Curricane/codeplace/blob/master/DesignPattern/Adapter/%E5%AF%B9%E8%B1%A1%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F%E7%BB%93%E6%9E%84%E5%9B%BE.png)
 ```C++
 class Adapter: public Target
 {
