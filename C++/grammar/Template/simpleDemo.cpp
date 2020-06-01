@@ -49,16 +49,15 @@ class C:public A<T>
 private:
     T mC;
 public:
-
-    //因为父类A只有有参构造函数，因此需要在构造列表中初始化
-    // 派生类的函数，只能写在类里
-    C(T c, T a):A<T>(a)
-    {
-        mC = c;
-    }
-
+    C(T c, T a);
     void print();
 };
+
+template <typename T>
+C<T>::C(T c, T a): A<T>(a)
+{
+    mC = c;
+}
 
 template <typename T>
 void C<T>::print()
