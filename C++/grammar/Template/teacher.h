@@ -1,5 +1,7 @@
 #include <iostream>
 
+// 在Linux上需要加上，而macos上不需要
+#include <cstring>
 using std::cout;
 using std::endl;
 using std::ostream;

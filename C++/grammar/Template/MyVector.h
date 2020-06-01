@@ -7,7 +7,16 @@ template <typename T>
 class MyVector
 {
 
-    friend ostream & operator<< <T> (ostream &out,  const MyVector<T> &obj);
+    // 时代变了，operator<< <T> 在类中申明，类外实现的方式似乎不行了，因此老老实实的写在一起吧
+    friend ostream & operator<<  (ostream &out,  const MyVector<T> &obj)
+    {
+        cout << "MyVector 重载<< " << endl;
+        for (int i = 0; i < obj.m_len; ++i)
+        {
+            out << obj.m_pSpace[i] << ", ";
+        }
+        return out;
+    }
 //friend ostream & operator<< <T> (ostream &out,  const MyVector &obj);
 public:
 	MyVector(int size = 0);  //构造函数
@@ -37,6 +46,7 @@ MyVector<T>::MyVector(int size)
 {
     cout << "MyVector: 带参构造函数" << endl;
     m_pSpace = new T[size];
+    m_len = size;
 }
 
 template <typename T>
@@ -89,16 +99,16 @@ MyVector<T>& MyVector<T>::operator=(const MyVector<T> &obj)
     return *this;
 }
 
-template <typename T>
-ostream & operator<< (ostream &out,  const MyVector<T> &obj)
-{
-    cout << "MyVector 重载<< " << endl;
-    for (int i = 0; i < obj.m_len; ++i)
-    {
-        out << obj.m_pSpace[i] << " ";
-    }
-    return out;
-}
+// template <typename T>
+// ostream & operator<< (ostream &out,  const MyVector<T> &obj)
+// {
+//     cout << "MyVector 重载<< " << endl;
+//     for (int i = 0; i < obj.m_len; ++i)
+//     {
+//         out << obj.m_pSpace[i] << " ";
+//     }
+//     return out;
+// }
 
 
 
