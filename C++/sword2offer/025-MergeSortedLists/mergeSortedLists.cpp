@@ -72,8 +72,31 @@ ListNode* Merge(ListNode* pHead1, ListNode* pHead2)
     return pHead;
 }
 
+// 官方答案
+ListNode* Merge1(ListNode* pHead1, ListNode* pHead2)
+{
+    if (nullptr == pHead1)
+        return pHead2;
+    if (nullptr == pHead2)
+        return pHead1;
+    
+    ListNode* pMergedHead = nullptr;
+
+    if (pHead1->m_nValue < pHead2->m_nValue)
+    {
+        pMergedHead = pHead1;
+        pMergedHead->m_pNext = Merge1(pHead1->m_pNext, pHead2);
+    }
+    else
+    {
+        pMergedHead = pHead2;
+        pMergedHead->m_pNext = Merge1(pHead1, pHead2->m_pNext);
+    }
+    
+    return pMergedHead;
+}
 // ====================测试代码====================
-ListNode* Test(char* testName, ListNode* pHead1, ListNode* pHead2)
+ListNode* Test(const char* testName, ListNode* pHead1, ListNode* pHead2)
 {
     if(testName != nullptr)
         printf("%s begins:\n", testName);
@@ -85,7 +108,7 @@ ListNode* Test(char* testName, ListNode* pHead1, ListNode* pHead2)
     PrintList(pHead2);
 
     printf("The merged list is:\n");
-    ListNode* pMergedHead = Merge(pHead1, pHead2);
+    ListNode* pMergedHead = Merge1(pHead1, pHead2);
     PrintList(pMergedHead);
     
     printf("\n\n");
