@@ -42,6 +42,7 @@ int Min_v1(int* numbers, int length)
 }
 */
 
+// 利用二分法进行查找，需要注意因为部分是不排序的，需要特殊处理，此时要变为顺序查找。
 int Min_v1(int* numbers, int length)
 {
     if (nullptr == numbers || length <= 0)
