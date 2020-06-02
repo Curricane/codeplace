@@ -64,6 +64,111 @@ long long Fibonacci_TailRecursive(int n, long long  n_2, long long n_1)
 // 使用时从下往上计算，这里下是从0，1开始，计算到n
 Fibonacci_TailRecursive(n, 0, 1);
 ```
+## 011 旋转数组中的最小值
+18. 二分法变种，在两个排序的部分找到最小值，另类的终止条件，左边始终大于等于右边，不断逼近最小值
+```c++
+    while( numbers[l] >= numbers[r] ) // 
+    {
+        if(r - l <= 1) // 因为r ,l 的位置改变只能到mid 而不是mid-1 和mid + 1，需要额外的退出循环条件
+        {
+            mid = r;
+            break;
+        }
+        mid = l + ((r - l) >> 1);
+        if (numbers[mid] == numbers[r] && numbers[mid] == numbers[l]) // 在两个排序的部分找到最小值的特殊情况，改为顺序查询一次 
+        {
+            --r; //dont know minest one in which side,find it one by one from right to lefr
+        }
+        else if (numbers[mid] <= numbers[r])
+        {
+            r = mid;
+        } 
+        else 
+        {
+            l = mid;
+        }
+    }
+```
+## 012 矩阵中的路径
+19. 回溯法非常适合由多个步骤组成的问题，并且每个步骤都有多个选项，不断的重复选择，直到最终状态。**回溯法解决的问题的所有选项可以形象地用树状结构表示**回溯就是你选择一条路径，当走不通的时候，会原路返回选择其他的路径，如同遍历子树数目不确定的树去查找结果一样。
+20. 记住状态。这道题中，我们需要记住两个变量的状态 `pathLength`记录当前要识别的字符位置，`visited`标记哪些已经遍历过了。为了在递归中记录下来，传值采用的是引用和指针，并在每次走不通的时候，`--pathLength; visited[row * cols + col]=false;` 所谓**归来仍是少年**。
+```c++
+hasPath = hasPathCore(matrix, rows, cols, row, col-1, str, pathLength, visited) || 
+            hasPathCore(matrix, rows, cols, row-1, col, str, pathLength, visited) ||
+            hasPathCore(matrix, rows, cols, row, col+1, str, pathLength, visited) ||
+            hasPathCore(matrix, rows, cols, row+1, col, str, pathLength, visited);
 
+      
+// this step is ok, however next step in not ok, than go back
+if( !hasPath ) 
+{
+    --pathLength;
+    visited[row * cols + col] = false;
+}
+```
+21. 一维数组表示二维数组。`rows, cols`从1开始，则`matrix[row][col]`（row 和 col从零开始）表示为`matrix[row * cols + col]`。
+## 013机器人的运动范围
+22. 回溯法，用一个visited数组记录已经遍历过的地方，从头开始，上下左右遍历，约束好边界，用一个个小函数解决。
+## 014剪绳子
+23. 动态规划。最好是 从上而下分析问题，自下而上计算，这样可以充分利用辅助数组。
+24. 贪心算法。需要有数学去证明这个贪心的选择是正确的。
+25. 剪绳子需要注意的是，整个绳子的长度值，与分割后再分割的长度计算。
+```c++
+// 整个长度对应的最大值
+if (length < 2)
+    return 0;
+if (length == 2)
+    return 1;
+if (length == 3)
+    return 2;
+
+//开始分割后长度为x的部分对应的值，而整段对应的值是 0-0 1-0 2-1 3-2
+int* maxPro = new int[length + 1]();
+maxPro[0] = 0;
+maxPro[1] = 1;
+maxPro[2] = 2;
+maxPro[3] = 3;
+```
+26. 把剪绳子m段，简化为分为2段的问题
+```c++
+for (int i = 4; i <= length; ++i) // 从长度4 -> length计算
+{
+    max = 0;
+    for (int j = 1; j <= i / 2; ++j) // 分割成多段 取i/2是因为对称了
+    {
+        int ret = maxPro[j] * maxPro[i - j];
+        if (ret > max)
+            max = ret;
+    }
+    maxPro[i] = max;
+}
+
+max = maxPro[length];
+```
+## 015二进制中1的个数
+27. 负数右移，高位补充的是1，左移补充0. 因此循环中用左移。
+```c++
+while (one)
+{
+    if (n & one)
+        ++count;
+    one = one << 1; // 右移one, 1的位置右移动，末尾补零
+}
+```
+28. n - 1让低位不断少一个1
+```c++
+int NumberOf1_Solution2(int n)
+{
+    int count = 0;
+    while(n)
+    {
+        ++ count;
+
+        // n - 1， 让最右边的 1 变为 0， 而其他的位置保持不变
+        n = (n - 1) & n;
+    }
+    return count;
+}
+```
 
 
