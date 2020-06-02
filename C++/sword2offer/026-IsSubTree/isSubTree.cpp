@@ -40,11 +40,53 @@ bool equal(BinaryTreeNode *A, BinaryTreeNode *B)
     return A->m_nValue == B->m_nValue && equal(A->m_pLeft, B->m_pLeft) && equal(A->m_pRight, B->m_pRight);
 };
 
+// 88888888888888888888888888888888888888888
+
+// 推荐的答案，考虑到值为浮点数
+bool Equal(double num1, double num2)
+{
+    if ((num1 - num2 > -0.0000001) && (num1 - num2 < 0.000001))
+        return true;
+    return false;
+}
+
+//判断是否是其子树
+bool DoesTree1HaveTree2(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2)
+{
+    if(pRoot2 == nullptr)
+        return true;
+    if(pRoot1 == nullptr)
+        return false;
+    
+    if(!Equal(pRoot1->m_nValue, pRoot2->m_nValue))
+    {
+        return false;
+    }
+
+    return DoesTree1HaveTree2(pRoot1->m_pLeft, pRoot2->m_pLeft) && DoesTree1HaveTree2(pRoot1->m_pRight, pRoot2->m_pRight);
+}
+
+bool HasSubTree(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2)
+{
+    bool ret = false;
+
+    if(pRoot1 != nullptr && pRoot2 != nullptr)
+    {
+        if(Equal(pRoot1->m_nValue, pRoot2->m_nValue))
+            ret = DoesTree1HaveTree2(pRoot1, pRoot2);
+        if(!ret)
+            ret = DoesTree1HaveTree2(pRoot1->m_pLeft, pRoot2);
+        if(!ret)
+            ret = DoesTree1HaveTree2(pRoot1->m_pRight, pRoot2);
+    }
+    return ret;
+}
+
 // ============测试代码=========
-void Test(char* testName, BinaryTreeNode* A, BinaryTreeNode* B, bool expected)
+void Test(const char* testName, BinaryTreeNode* A, BinaryTreeNode* B, bool expected)
 {
     
-    if (expected == isSubTree(A, B))
+    if (expected == HasSubTree(A, B))
     {   
         printf("%s passed\n", testName);
     }
