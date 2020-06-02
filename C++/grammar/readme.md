@@ -115,4 +115,64 @@ C<T>::C(T c, T a): A<T>(a)
         age = 0;
     }
 ```
+# 类型转换
+## 语法
+### C风格类型转换
+- type b = (type)a
+### C++风格类型转换
+- static_cast 静态类型转换。如int转换成char
+- reinterpreter_cast 重新解释类型，类似于强制转换，但更强
+- dynamic_cast 命名上理解是动态类型转换。如子类和父类之间的多态类型转换。
+- const_cast 字面上理解就是去const属性
+- 使用方式为`newtype new = xxx_cast<newtype> old`
+### 一般性介绍
+1. static_cast<>() 静态类型转换，**编译时c++编译器会做类型检查；
+2. 一般性结论：
+- C语言中  能**隐式类型转换**的，在c++中可用 static_cast<>()进行类型转换。因C++编译器在编译检查一般都能通过；
+- C语言中**不能隐式类型转换**的，在c++中可以用reinterpret_cast<>() 进行强行类型解释。
+- reinterpret_cast<>()很难保证移植性。
+- dynamic_cast<>()，**动态类型转换**，安全的基类和子类之间转换；**运行时类型检查**；一般用于检查参数能否转化我特定的子类。
+```c++
+void ObjPlay(Animal *base) // 参数为一个父类
+{
+	base->cry();
+	Dog *pDog = dynamic_cast<Dog *>(base); // 判断是否是某个子类
+	if (pDog != NULL)
+	{
+		pDog->cry();
+		pDog->doSwim();
+	}
 
+	Cat *pCat = dynamic_cast<Cat *>(base);
+	if (pCat != NULL)
+	{
+		pCat->cry();
+		pCat->doTree();
+	}
+}
+```
+- const_cast<>()，去除变量的**只读属性**
+```c++
+//典型用法 把形参的只读属性去掉
+void Opbuf(const char *p)
+{
+	cout << p << endl;
+	char *p2 = const_cast<char*>(p);
+	p2[0] = 'b';
+	cout << p << endl;
+}
+
+const char *p1 = "11111111111"; // 只读
+
+char *p2 = "22222222"; // 可读
+
+char *p3 = const_cast<char *>(p1); // 去只读属性
+char buf[100] = "aaaaaaaaaaaa"; 
+
+//要保证指针所执行的内存空间能修改才行 若不能修改 还是会引起程序异常
+//Opbuf("dddddddddddsssssssssssssss"); // 因为”dddd.."是在字符表中的，没有内存空间，不可以修改
+```
+3. 总结
+- static_cast<>()和reinterpret_cast<>() 基本上把C语言中的 强制类型转换给覆盖
+- 程序员要清除的知道: 要转的变量，类型转换前是什么类型，类型转换后是什么类型。转换后有什么后果。
+- **一般情况下，不建议进行类型转换；避免进行类型转换**
