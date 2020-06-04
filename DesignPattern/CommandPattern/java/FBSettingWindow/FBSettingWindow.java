@@ -1,3 +1,4 @@
+package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 import java.util.*;
 
@@ -45,6 +46,10 @@ class MinimizeCommand extends Command
 {
     private WindowHanlder whobj;
 
+    public MinimizeCommand()
+    {
+        whobj = new WindowHanlder();
+    }
     @Override
     public void execute() {
         whobj.minimize();

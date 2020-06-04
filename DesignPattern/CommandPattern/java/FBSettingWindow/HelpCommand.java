@@ -1,4 +1,4 @@
-
+package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 // 帮助命令类：具体的命令
 public class HelpCommand extends Command {

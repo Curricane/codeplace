@@ -1,4 +1,4 @@
-// package DesignPattern.CommandPattern.java.FBSettingWindow;
+package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 public class Client
 {

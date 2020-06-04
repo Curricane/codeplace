@@ -1,4 +1,4 @@
-//package DesignPattern.CommandPattern.java.FBSettingWindow;
+package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 // 功能键类：请求发送者
 public  class FunctionButton {

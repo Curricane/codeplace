@@ -1,4 +1,4 @@
-// package DesignPattern.CommandPattern.java.FBSettingWindow;
+package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -15,7 +15,7 @@ public class XMLUtil
             DocumentBuilderFactory dFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = dFactory.newDocumentBuilder();
             Document doc;
-            doc = builder.parse(new File("./config.xml"));
+            doc = builder.parse(new File("DesignPattern/CommandPattern/java/FBSettingWindow/config.xml"));
 
             // 获取包含类名的文本节点
             NodeList nl = doc.getElementsByTagName("className");
