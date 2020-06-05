@@ -193,6 +193,10 @@ public class Test {
 ### String
 - String对象是常量
 - 当创建 String 类型的对象时，虚拟机会在**常量池**中查找有没有已经存在的值和要创建的值相同的对象，如果有就把它赋给当前引用。如果没有就在**常量池**中重新创建一个 String 对象。
+####  String StringBuffer 和 StringBuilder 的区别
+- StringBuffer 对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。StringBuilder 并没有对方法进行加同步锁，所以是非线程安全的。
+- StringBuffer 每次都会对 StringBuffer 对象本身进行操作，而不是生成新的对象并改变对象引用
+- 巧记StringBuffer爸爸级别线程安全
 ### 面向对象
 #### 构造器 Constructor
 - Constructor 不能被 override（重写）,但是可以 overload（重载）,所以你可以看到一个类中有多个构造函数的情况，但父类的构造器不能被重写。
@@ -214,4 +218,48 @@ public class Test {
 - 方法具有多态性，属性不具有多态性；
 - 多态不能调用“只在子类存在但在父类不存在”的方法；
 - 如果子类重写了父类的方法，真正执行的是子类覆盖的方法，如果子类没有覆盖父类的方法，执行的是父类的方法。
+#### 接口和抽象类
+- **接口的方法默认是 public**，所有方法在接口中不能有实现，而**抽象类可以有非抽象的方法**。
+- 接口中除了 static、final 变量，不能有其他变量，而抽象类中则不一定。
+- 一个类可以实现多个接口，但只能实现一个抽象类。**接口自己本身可以通过 extends 关键字扩展多个接口**。
+- 从设计层面来说，抽象是对类的抽象，是一种模板设计，而接口是对行为的抽象，是一种行为的规范。
+- 接口关键字 `interface` 抽象类关键字`abstract`.
+> 备注：
+- 在 JDK8 中，接口也可以定义静态方法，可以直接用接口名调用。实现类和实现是不可以调用的。如果同时实现两个接口，接口中定义了一样的默认方法，则必须重写，不然会报错。
+- jdk9 的接口被允许定义私有方法 。
+### 其他
+####  Java 序列化中如果有些字段不想进行序列化，怎么办？
+- 对于不想进行序列化的变量，使用 transient 关键字修饰。
+- transient 关键字的作用是：阻止实例中那些用此关键字修饰的的变量序列化；**当对象被反序列化时，被 transient 修饰的变量值不会被持久化和恢复**。
+- **transient 只能修饰变量，不能修饰类和方法**。
+#### 获取用键盘输入常用的两种方法
+- 方法1：通过Scanner
+```java
+Scanner input = new Scanner(System.in);
+String s = input.nextLine();
+input.close();
+```
+- 方法二：通过BufferedReader
+```java
+BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+String s = input.readLine();
+```
+## Java核心技术
+### 集合Collections与数组
+#### 集合框架
+![java集合框架图](./picture/java集合框架图.png)
+#### 集合与数组的区别
+1. 长度区别
+- 数组固定长度
+- 集合长度可变
+2. 内容区别
+- 数组可以是基本类型，也可以是引用类型
+- 集合只能是引用类型
+3. 元素内容
+- 数组只能存储同种类型
+- **集合可以存储不同的类型(其实集合一般存储的也是同一种类型)**
+#### 集合的方法
+![javaCollections方法](./picture/javaCollections方法.png)
+#### 常用集合的分类
+![java集合框架图-注释](./picture/java集合框架图-注释.png)
 
