@@ -150,8 +150,44 @@ printArray( stringArray  );
 - 要求：**如果两个对象相等，则 hashcode 一定也是相同的**。
 - 因为equals和hashCode最开始都是通过判断地址来判断相同的，如果equals不再以地址作为相等的判断条件，那么hashCode也不能用地址来判断了。
 - hash存在碰撞问题，因此存在两个对象hashCode值相同，但对象不一样。
+### 方法(函数)
+#### java 程序设计语言总是采用按值调用
+- **方法得到的是所有参数值的一个拷贝，也就是说，方法不能修改传递给它的任何参数变量的内容**。
+> 不管是传入值还是引用类型的数据，作为参数是，得到的都只是他们的副本，引用得到的是引用的副本，而这个引用的副本是可以像变量一样被改变的。
+```java
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Student s1 = new Student("小张");
+		Student s2 = new Student("小李");
+		Test.swap(s1, s2); // x 小李 y 小张
+		System.out.println("s1:" + s1.getName()); //s1 小张
+		System.out.println("s2:" + s2.getName()); //s2 小李 
+	}
+
+    // 引用副本的交换，并不能改变什么
+	public static void swap(Student x, Student y) {
+		Student temp = x;
+		x = y;
+		y = temp;
+		System.out.println("x:" + x.getName());
+		System.out.println("y:" + y.getName());
+	}
+}
+```
+- **一个方法不能修改一个基本数据类型的参数（即数值型或布尔型）**。
+- **一个方法可以改变一个对象参数的状态**。
+- **一个方法不能让对象参数引用一个新的对象**。
+- **java函数能改变的只有引用对象中的数据，不能改变引用自身和基本类型**
+### 重载与重写
+- 重载就是同样的一个方法能够根据输入数据的不同，做出不同的处理
+- 重写就是当子类继承自父类的相同方法，输入数据一样，但要做出有别于父类的响应时，你就要覆盖父类方
+![java重载与重写的区别](./picture/java重载与重写的区别.png)
+### 深拷贝与浅拷贝
+- 浅拷贝：对基本数据类型进行值传递，**对引用数据类型进行引用传递般的拷贝**，此为浅拷贝。
+- 深拷贝：对基本数据类型进行值传递，**对引用数据类型，创建一个新的对象，并复制其内容**，此为深拷贝。
 ### String
 - String对象是常量
 - 当创建 String 类型的对象时，虚拟机会在**常量池**中查找有没有已经存在的值和要创建的值相同的对象，如果有就把它赋给当前引用。如果没有就在**常量池**中重新创建一个 String 对象。
-
 
