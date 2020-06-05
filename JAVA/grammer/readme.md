@@ -262,4 +262,40 @@ String s = input.readLine();
 ![javaCollections方法](./picture/javaCollections方法.png)
 #### 常用集合的分类
 ![java集合框架图-注释](./picture/java集合框架图-注释.png)
+#### list和set的区别
+1. 有序性
+- List保证按插入顺序排序
+- Set存储和取出的顺序不一致
+2. 唯一性
+- List可以重复
+- Set 元素唯一
+3. 获取元素
+- List可以通过索引操作元素
+- Set不能根据索引获取元素
+#### List
+![javaList](./picture/javaList.png)
+- 避免使用Vector，因为线程安全，但很低效
+- ArrayList有三个构造方法
+```java
+public ArrayList(int initialCapacity)//构造一个具有指定初始容量的空列表。    
+public ArrayList()      //默认构造一个初始容量为10的空列表。    
+public ArrayList(Collection<? extends E> c)//构造一个包含指定 collection 的元素的列表
+```
+- Vector有四个构造方法
+```java
+public Vector()//使用指定的初始容量和等于0的容量增量构造一个空向量。    
+public Vector(int initialCapacity)//构造一个空向量，使其内部数据数组的大小，其标准容量增量为零。    
+public Vector(Collection<? extends E> c)//构造一个包含指定 collection 中的元素的向量    
+public Vector(int initialCapacity,int capacityIncrement)//使用指定的初始容量和容量增量构造一个空的向量    
+```
+#### Set
+![java_set](./picture/java_set.png)
+#### map
+![map主要方法](./picture/map主要方法.png)
+#### HashMap和HashTable的比较
+![HashMap与HashTable比较](./picture/HashMap与HashTable比较.png)
+#### TreeMap
+![javaTreeMap](./picture/javaTreeMap.png)
+#### map的其他的类
+![map其他的类](./picture/map其他的类.png)
 
