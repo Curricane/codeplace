@@ -238,3 +238,32 @@ catch (...) // 匹配任何异常，一般是未知异常处理
 ```
 virtual const char* what() const throw();
 ```
+# I/O
+## 常用的IO类
+![c++io类库中常用的流类](./picture/c++io类库中常用的流类.png)
+## 与iostream类库有关的头文件
+- iostream  包含了对输入输出流进行操作所需的基本信息
+- fstream  用于用户管理的文件的I/O操作
+- strstream  用于字符串流I/O
+- stdiostream  用于混合使用C和C + +的I/O机制时，例如想将C程序转变为C++程序
+- iomanip  在使用**格式化I/O**时应包含此头文件
+## 标准IO流
+- cout
+1. cout不是C++预定义的关键字，它是ostream流类的对象，在iostream中定义
+2. 输出时不必考虑数据是什么类型，系统会判断数据的类型，并根据其类型选择调用与之匹配的运算符重载函数
+3. cout流在内存中对应开辟了一个**缓冲区**，用来存放流中的数据，当向cout流插 人一个endl时，不论缓冲区是否已满，都立即输出流中所有数据，然后插入一个换行符，并刷新流（清空缓冲区）。注意如果插人一个换行符'\n'，如`cout<<a<<"\n"`，则只输出和换行，而不刷新cout流(但并不是所有编译系统都体现出这一区别）
+- cin
+- cerr
+1. cerr流对象是标准错误流，cerr流已被指定为与显示器关联
+2. cerr是**不经过缓冲区**，直接向显示器上输出有关信息
+- clog
+1. clog流对象也是标准错误流，它是console log的缩写。它的作用和cerr相同，都是在终端显示器上显示出错信息.
+2. clog中的信息存放在缓冲区中，缓冲区满后或遇endl时向显示器输出
+### 标准输入流对象cin常用的函数
+- `cin.get() //一次只能读取一个字符`
+- `cin.get(一个参数) //读一个字符`
+- `cin.get(三个参数) //可以读字符串`
+- `cin.getline()` 获取一行数据`cin.getline(buf1, 256, '\n');`或者`cin.getline(buf1, 256)`读取一行字符到buf1中
+- `cin.ignore(int num)` 忽略nun个字符输入
+- `cin.peek()` 
+- `cin.putback()`
