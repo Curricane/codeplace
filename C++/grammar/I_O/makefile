@@ -5,10 +5,12 @@ INCLUDE = -I../Utilities
 
 #vpath %.cpp ../Utilities/
 
-BIN = demo1 demo2
+BIN = demo1 demo2 demo3
 
 BIN1 = demo1 
 BIN2 = demo2
+BIN3 = demo3
+
 OBJS1 = \
 	demo1.o  
 
@@ -21,11 +23,18 @@ OBJS2 = \
 SRC2 = \
 	demo2.cpp
 
+OBJS3 = \
+	demo3.o  
+
+SRC3 = \
+	demo3.cpp
+
 
 # 链接
 install: $(OBJS1) $(OBJS2) $(OBJS3)
 	$(CC) $(CFLAGS) ${INCLUDE} -o $(BIN1) $(OBJS1)
 	$(CC) $(CFLAGS) ${INCLUDE} -o $(BIN2) $(OBJS2)
+	$(CC) $(CFLAGS) ${INCLUDE} -o $(BIN3) $(OBJS3)
 
 # all 放在第一伪命令，在makefile中默认第一个伪命令是目标，这样需要的$(OBJS1) $(OBJS2)就会都执行
 # all: $(OBJS1) $(OBJS2) $(OBJS3)

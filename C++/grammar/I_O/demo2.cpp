@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <iomanip>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -83,6 +83,33 @@ void test5()
 
 }
 
+void test6()
+{
+    cout << "测试cout.put()" << endl;
+    cout.put('h').put('e').put('h').put('e'); // hehe
+    cout << endl;
+
+    cout << "测试cout.write()" << endl;
+
+    // 给的大于字符长度 不会帮我们检查 提高速度
+    cout.write("hello world", 11); // hello world
+    cout << endl;
+
+    cout << "测试cout.flush()" << endl;
+    cout.write("测试", strlen("测试")); // 测试
+    cout.flush();
+    cout << endl;
+
+    //cout.fill('*');
+    cout.width(20);
+    cout << "对不起" << endl; //***********对不起
+
+    cout.setf(std::ios::internal);
+    cout << "12345" << endl;
+    // cout.width(30);
+    cout.fill('-');
+    cout << std::setw(30) <<  std::setiosflags(std::ios::showbase) <<  std::setiosflags(std::ios::internal) << "1234567890" << "end" << endl;
+}
 
 int main()
 {   
@@ -99,5 +126,8 @@ int main()
     // test4();
 
     // test cin.putback('a');
-    test5();
+    // test5();
+
+    // 测试cout的成员函数
+    // test6();
 }
