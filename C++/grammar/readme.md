@@ -304,7 +304,7 @@ outfile.open("f1.dat",ios::out);  //使文件流与f1.dat文件建立关联
 - 使用`>>`输出单个字符
 - `input.get(txtbuff[1]) `读取单个字符
 - `input.getline(txtbuff+2, 1024); // 不会读取\n进去`
-- `ofstream::ofstream(constchar *filename, int mode = ios::out,nt penprot = filebuf::openprot);`
+- `ofstream::ofstream(constchar *filename, int mode = ios::out,int penprot = filebuf::openprot);` (**但这个接口似乎废除了，只有两个参数的**)
 1. filename：　　要打开的文件名
 2. mode：　　　　要打开文件的方式
 3. prot：　　　　打开文件的属性
@@ -312,8 +312,34 @@ outfile.open("f1.dat",ios::out);  //使文件流与f1.dat文件建立关联
 - 可以用“或”或者“+”把以上属性连接起来 ，如3或1|2就是以只读和隐含属性打开文件。
 - `input.read(txtbuff+len, 1024); // 读取指定长度，如果太长只读取有效长度的数据`
 ### 对二进制文件的读写操作
-- `output.write("这里的风景真好\n", 1024);//写入固定长度或有效长度`
+- `output.write("这里的风景真好\n", 1024);` **写入指定长度的数据，如果`长度大于有效数据长度`，则会写入错误数据**
 - **二进制文件不是以ASCII代码存放数据的**，它将内存中数据存储形式不加转换地传送到磁盘文件，因此它又称为**内存数据的映像文件**。因为文件中的信息不是字符数据，而是字节中的二进制形式的信息，因此它又称为**字节文件**。
+- **在打开时要用ios::binary指定为以二进制形式传送和存储**
+- 对二进制文件的读写**主要用istream类成员函数的read和write来实现**，他们的原型为：
+1. `istream& read(char *buffer, int len);`
+2. `ostream& write(const char *buffer, int len);`
+- 使用时还是用fstream，只是读写时用的是`std::ios::binary`,读写的函数用`write(const char* buffer, int len); read(char *buffer, int len);`
+```c++
+// 测试二进制文件的读写
+void test2()
+{
+    const char * outPath = "./testBinaryIO.txt";
+    const char * inPath = "./test.txt";
+    char buffer[1024 * 32];
+
+	// 文件的二进制读写依旧使用fstream，但得指明二进制读写方式
+    std::ifstream reader(inPath, std::ios::binary);
+    reader.read(buffer, 1024 * 32);
+    reader.close();
+    std::ofstream writer(outPath, std::ios::binary | std::ios::app);
+    writer.write(buffer, strlen(buffer));
+    writer.close();
+    
+    std::ifstream reader1(outPath, std::ios::binary);
+    reader.read(buffer, 1024 * 32);
+    reader.close();
+}
+```
 
 
 
