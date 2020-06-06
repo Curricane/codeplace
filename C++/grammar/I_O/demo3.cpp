@@ -12,6 +12,7 @@ void test1()
     {
         output.put(s[i]);
     }
+    output.write("这里的风景真好\n", 1024);//写入固定长度或有效长度
     output.close();
 
     std::ifstream input("./test.txt");
@@ -35,6 +36,10 @@ void test1()
     txtbuff[len] = '\n';
     len++;
     input.getline(txtbuff+len, 1024);
+    std::cout << "txtbuff len: " << strlen(txtbuff) <<  " txtbuff: " << txtbuff << std::endl;
+    
+    len = strlen(txtbuff);
+    input.read(txtbuff+len, 1024); // 读取指定长度，如果太长只读取有效长度的数据
     std::cout << "txtbuff len: " << strlen(txtbuff) <<  " txtbuff: " << txtbuff << std::endl;
 
     input.close();
