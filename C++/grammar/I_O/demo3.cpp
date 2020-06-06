@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 
+// 测试字符文件的读写
 void test1()
 {
     char txtbuff[1024 * 32];
@@ -12,7 +13,7 @@ void test1()
     {
         output.put(s[i]);
     }
-    output.write("这里的风景真好\n", 1024);//写入固定长度或有效长度
+    output.write("这里的风景真好\n", 1024);//写入指定长度的数据，如果`长度大于有效数据长度`，则会写入错误数据
     output.close();
 
     std::ifstream input("./test.txt");
@@ -45,8 +46,30 @@ void test1()
     input.close();
 }
 
+// 测试二进制文件的读写
+void test2()
+{
+    const char * outPath = "./testBinaryIO.txt";
+    const char * inPath = "./test.txt";
+    char buffer[1024 * 32];
+
+    std::ifstream reader(inPath, std::ios::binary);
+    reader.read(buffer, 1024 * 32);
+    reader.close();
+    std::cout << "after read buff size is : " << strlen(buffer) << std::endl;
+    std::ofstream writer(outPath, std::ios::binary | std::ios::app);
+    writer.write(buffer, strlen(buffer));
+    writer.close();
+    
+    std::ifstream reader1(outPath, std::ios::binary);
+    reader.read(buffer, 1024 * 32);
+    reader.close();
+    std::cout << "after read buff size is : " << strlen(buffer) << std::endl;
+
+}
 
 int main()
 {
-    test1();
+    // test1();
+    test2();
 }
