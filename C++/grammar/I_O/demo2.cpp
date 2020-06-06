@@ -69,8 +69,20 @@ void test4()
     cin.ignore(2); // 忽略两个空
     cin.get(c); // c
     cout << "a: " << a << " b: " << b << " c:" << c << endl; //a: a b: b c:c
-
 }   
+
+void test5()
+{
+    char name[1024];
+    char c;
+    cout << "输入一行: 123456" << endl;
+    cin.get(c);
+    cin.putback('a');
+    cin.getline(name, 1024);
+    cout << "取出一个1，放回一个a后： " << name << endl; // 取出一个1，放回一个a后： a23456
+
+}
+
 
 int main()
 {   
@@ -84,5 +96,8 @@ int main()
     // test3();
 
     // 测试 cin.peek()
-    test4();
+    // test4();
+
+    // test cin.putback('a');
+    test5();
 }
