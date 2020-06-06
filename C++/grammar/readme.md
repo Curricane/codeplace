@@ -260,10 +260,10 @@ virtual const char* what() const throw();
 1. clog流对象也是标准错误流，它是console log的缩写。它的作用和cerr相同，都是在终端显示器上显示出错信息.
 2. clog中的信息存放在缓冲区中，缓冲区满后或遇endl时向显示器输出
 ### 标准输入流对象cin常用的函数
-- `cin.get() //一次只能读取一个字符`
-- `cin.get(一个参数) //读一个字符`
-- `cin.get(三个参数) //可以读字符串`
-- `cin.getline()` 获取一行数据`cin.getline(buf1, 256, '\n');`或者`cin.getline(buf1, 256)`读取一行字符到buf1中
+- `cin.get() //一次只能读取一个字符` 不会自动吸收多余的enter
+- `cin.get(一个参数) //读一个字符` 不会自动吸收enter
+- `cin.get(name, 256, '\n'); // 不会吸收缓存区的\n` 
+- `cin.getline()` 获取一行数据`cin.getline(buf1, 256, '\n');`或者`cin.getline(buf1, 256)`读取一行字符到buf1中 会把结尾多余的\n吸收掉
 - `cin.ignore(int num)` 忽略nun个字符输入
-- `cin.peek()` 
-- `cin.putback()`
+- `cin.peek()`  // 没有数据的时候会阻塞
+- `cin.putback(char c)` // 放回一个字符到缓冲区中
