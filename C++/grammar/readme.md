@@ -340,6 +340,35 @@ void test2()
     reader.close();
 }
 ```
+# STL(标准模板库)理论基础
+## 基本概念
+- STL的从广义上讲分为三类：algorithm（算法）、container（容器）和iterator（迭代器），`容器和算法通过迭代器可以进行无缝地连接`。几乎所有的代码都采 用了模板类和模板函数的方式，这相比于传统的由函数和类组成的库来说提供了更好的代码重用机会。在C++标准中，STL被组织为下面的13个头文 件：`<algorithm>、<deque>、<functional>、<iterator>、<vector>、<list>、<map>、<memory>、<numeric>、<queue>、<set>、<stack> 和<utility>`。
+- `STL的一个重要特点是数据结构和算法的分离`
+### STL详细的说有六大组件
+1. 容器（Container)
+2. 算法（Algorithm）
+3. 迭代器（Iterator）
+4. 仿函数（Function object）
+5. 适配器（Adaptor）
+6. 空间配制器（allocator）
+### 容器
+- 用来管理一组元素
+- 主要的头文件有：
+1. `<vector>`
+2. `<list>`
+3. `<deque>`
+4. `<set>`
+5. `<map>`
+6. `<stack>`
+7. `<queue>`
+#### 容器的分类
+- 序列式容器(Sequence containers):每个元素都有固定位置－－取决于插入时机和地点，和元素值无关。
+> `vector、deque、list`
+- 关联式容器(Associated containers):元素位置取决于特定的排序准则，和插入顺序无关
+> `set、multiset、map、multimap`
+![STL常用的数据结构](./picture/STL常用的数据结构.png)
+### 迭代器
+
 
 
 
