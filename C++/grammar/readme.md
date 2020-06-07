@@ -368,7 +368,123 @@ void test2()
 > `set、multiset、map、multimap`
 ![STL常用的数据结构](./picture/STL常用的数据结构.png)
 ### 迭代器
+- 软件设计有一个基本原则，`所有的问题都可以通过引进一个间接层来简化`， **这种简化在STL中就是用迭代器来完成的**。
+- 几乎STL提供的所有算法都是`通过迭代器存取元素序列`进行工作的，**每一个容器都定义了其`本身所专有的迭代器`**，用以存取容器中的元素.
+- 迭代器部分主要由头文件`<utility>,<iterator>和<memory>`组成
+1. `<utility>`是一个很小的头文件，它包括了贯穿使用在STL中的几个模板的声明
+2. `<iterator>`中提供了迭代器使用的许多方法
+3. `<memory>`它以不同寻常的方式为容器中的元素分配存储空间，同时也为某些算法执行期间产生的临时对象提供机制,主要部分是模板类allocator，它负责产生所有容器中的默认分配器.
+### 算法
+- 算法部分主要由头文件`<algorithm>，<numeric>和<functional>`组成
+1. `<algorithm>`它是由一大堆模版函数组成的，可以认为每个函数在很大程度上都是独立的，其中常用到的功能范围涉及到比较、交换、查找、遍历操作、复制、修改、移除、反转、排序、合并等等.
+2. `<numeric>`体积很小，只包括几个在序列上面进行简单数学运算的模板函数，包括加法和乘法在序列上的一些操作
+3. `<functional>`中则定义了一些模板类，用以声明函数对象。
+## STL的string
+string是STL的字符串类型，通常用来表示字符串。
+### string与char*的比较
+- `string`是一个类, `char*`是一个指向字符的指针.`string`封装了`char*`，管理这个字符串，**是一个char*型的容器**.
+- `string`不用考虑内存释放和越界.
+- `string`提供了一系列的字符串操作函数.查找find，拷贝copy，删除erase，替换replace，插入insert.
+### string的构造函数
+- 默认构造函数
+```c++
+std::string s1(); ////构造一个空的字符串string s1
+```
+- 拷贝构造函数
+```c++
+string(const string &str);
+std::string s2(s1); //构造一个与str一样的string
+```
+- 带参数的构造函数
+```c++
+string(const char *s)
+std::string s3("张三");
 
+string(int n,char c);
+std::string s4(4, 'h'); // hhhh 用n个字符c初始化
+```
+### string存取字符操作
+```C++
+const char &operator[] (int n) const; // s1[1]
+const char &at(int n) const; // s1.at(1)
+char &operate[](int n); // s1[1]
+char &at(int n); // s1.at(1)
+```
+`operator[]`和`at()`均返回当前字符串中第n个字符，但二者是有区别的.**主要区别在于at()在越界时会抛出异常，[]在刚好越界时会返回(char)0，再继续越界时，编译器直接出错**。如果你的程序希望可以通过try,catch捕获异常，建议采用at().
+### string与char*的转换
+- string -> const char*
+`const char* s = s1.c_str();`
+- char* 或 char* const char* -> string
+```c++
+const char* name = "curricane"
+std::string(name);
+
+string &operator=(const string &s);//把字符串s赋给当前的字符串
+std::string s = name;
+
+string &assign(const char *s); //把字符串s赋给当前的字符串
+string &assign(const char *s, int n); //把字符串s的前n个字符赋给当前的字符串
+string &assign(const string &s);  //把字符串s赋给当前字符串
+string &assign(int n,char c);  //用n个字符c赋给当前字符串
+string &assign(const string &s,int start, int n);  //把字符串s中从start开始的n个字符赋给当前字符串
+```
+### 把string拷贝到char*指向的内存空间的操作
+- `int copy(char *s, int n, int pos=0) const;`
+> 把当前串中以pos开始的n个字符拷贝到以s为起始位置的字符数组中，返回实际拷贝的数目。`注意要保证s所指向的空间足够大以容纳当前字符串，不然会越界`。
+### 常用的函数
+- 计算长度
+1. int length() const;   //返回当前字符串的长度。长度不包括字符串结尾的'\0'。
+- 判空
+1. bool empty() const;     //当前字符串是否为空
+- 字符串连接
+1. string &operator+=(const string &s);  //把字符串s连接到当前字符串结尾
+2. string &operator+=(const char *s);//把字符串s连接到当前字符串结尾
+3. string &append(const char *s);    //把字符串s连接到当前字符串结尾
+4. string &append(const char *s,int n);  //把字符串s的前n个字符连接到当前字符串结尾
+5. string &append(const string &s);   //同operator+=()
+6. string &append(const string &s,int pos, int n);//把字符串s中从pos开始的n个字符连接到当前字符串结尾
+7. string &append(int n, char c);   //在当前字符串结尾添加n个字符c
+- 字符串赋值
+1. string &operator=(const string &s);//把字符串s赋给当前的字符串
+2. string &assign(const char *s); //把字符串s赋给当前的字符串
+3. string &assign(const char *s, int n); //把字符串s的前n个字符赋给当前的字符串
+4. string &assign(const string &s);  //把字符串s赋给当前字符串
+5. string &assign(int n,char c);  //用n个字符c赋给当前字符串
+6. string &assign(const string &s,int start, int n);  //把字符串s中从start开始的n个字符赋给当前字符串
+- 比较
+1. int compare(const string &s) const;  //与字符串s比较
+2. int compare(const char *s) const;   //与字符串s比较
+> compare函数在>时返回 1，<时返回 -1，==时返回 0。比较区分大小写，比较时参考字典顺序，排越前面的越小。大写的A比小写的a小。
+- 获取子串
+1. string substr(int pos=0, int n=npos) const;    //返回由pos开始的n个字符组成的子字符串
+- **查找**
+1. int find(char c,int pos=0) const;  //从pos开始查找字符c在当前字符串的位置 
+2. int find(const char *s, int pos=0) const;  //从pos开始查找字符串s在当前字符串的位置
+3. int find(const string &s, int pos=0) const;  //从pos开始查找字符串s在当前字符串中的位置
+4. find函数如果查找不到，就返回-1
+5. int rfind(char c, int pos=npos) const;   //从pos开始从后向前查找字符c在当前字符串中的位置 
+6. int rfind(const char *s, int pos=npos) const;
+7. int rfind(const string &s, int pos=npos) const; //rfind是反向查找的意思，如果查找不到， 返回-1
+- 替换
+1. string &replace(int pos, int n, const char *s);//删除从pos开始的n个字符，然后在pos处插入串s
+2. string &replace(int pos, int n, const string &s);  //删除从pos开始的n个字符，然后在pos处插入串s
+3. void swap(string &s2);    //交换当前字符串与s2的值
+- string的区间删除和插入
+1. string &insert(int pos, const char *s);
+2. string &insert(int pos, const string &s);//前两个函数在pos位置插入字符串s
+3. string &insert(int pos, int n, char c);  //在pos位置 插入n个字符c
+4. string &erase(int pos=0, int n=npos);  //删除pos开始的n个字符，返回修改后的字符串
+- `transform`
+```c++
+void test()
+{
+    string s2 = "AAAbbb";
+    transform(s2.begin(), s2.end(), toupper); // 变成大写
+
+    string s3 = "AAAbbb";
+    transform(s3.begin(), s3.end(), s3.begin(), tolower);// 变成小写
+}
+```
 
 
 
