@@ -485,6 +485,46 @@ void test()
     transform(s3.begin(), s3.end(), s3.begin(), tolower);// 变成小写
 }
 ```
-
-
-
+## Vector容器
+- vector是将元素置于一个动态数组中加以管理的容器
+- vector可以随机存取元素（支持索引值直接存取， 用[]操作符或at()方法
+- vector**尾部添加或移除元素非常快速，但是在中部或头部插入元素或移除元素比较费时**
+### 构造函数
+#### 默认构造函数
+- `vector<T> vecT; `
+```c++
+vector<int> vecInt;        	//一个存放int的vector容器。
+vector<float> vecFloat;     	//一个存放float的vector容器。
+vector<string> vecString;   	//一个存放string的vector容器。
+...				    //尖括号内还可以设置指针类型或自定义类型。
+Class CA{};
+vector<CA*> vecpCA;	  	//用于存放CA对象的指针的vector容器。
+vector<CA> vecCA;     	//用于存放CA对象的vector容器
+```
+> 由于容器元素的存放是`按值复制`的方式进行的，所以此时CA`必须提供CA的拷贝构造函数`，以保证CA对象间拷贝正常。
+#### 带参构造函数
+1. `vector(beg,end)`构造函数将`[beg, end)区间`中的元素拷贝给本身。注意该区间是`左闭右开的区间`。**beg和end可以是数组的指针，也可以是迭代器**。
+```c++
+int iArray[] = {0, 1, 2, 3, 4};
+vector<int> vecIntA(iArray, iArray + 5); // 数组指针
+vector<int> vecIntB(vecIntA.begin(), vecIntA.end()); // 迭代器
+```
+2. `vector(n,elem)` 构造函数将n个elem拷贝给本身。
+```c++
+vector<int> vecIntC(9, 1); // 容器vecIncC中有9元素，每个元素的值都是9
+```
+3. `vector(const vector &vec)`拷贝构造函数
+### 常用的函数
+1. 赋值
+- `vector.assign(beg,end)`将[beg, end)区间中的数据拷贝赋值给本身。注意**该区间是左闭右开的区间**。
+- `vector.assign(n,elem)`将n个elem拷贝赋值给本身.assign的使用与带参构造函数的使用相同。
+- `vector& operator=(const vector  &vec)`重载等号操作符
+- `vector.swap(vec)`将vec与本身的`元素互换`。
+2. 大小相关
+- `vector.size()` 返回容器中元素的个数
+- `vector.empty()` 判断容器是否为空
+- `vector.resize(num)` 重新指定容器的长度为num，若容器变长，则**以默认值填充新位置; 如果容器变短，则末尾超出容器长度的元素被删除**.
+- `vector.resize(num, elem)` 重新指定容器的长度为num，若容器变长，则以elem值填充新位置。如果容器变短，则末尾超出容器长度的元素被删除.
+### 增删改查
+- `void push_back(element)`在容器尾部加入一个元素
+- `void pop_back();` 移除容器中最后一个元素
