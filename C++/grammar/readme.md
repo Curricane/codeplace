@@ -528,3 +528,27 @@ vector<int> vecIntC(9, 1); // 容器vecIncC中有9元素，每个元素的值都
 ### 增删改查
 - `void push_back(element)`在容器尾部加入一个元素
 - `void pop_back();` 移除容器中最后一个元素
+- `vector<T>::iterator it =  vector.erase(vector<T>::iterator pos);` 移除指定pos位置的元素，并返回pos位置的迭代器
+- `vector<T>::iterator it =  vector.erase(vector<T>::iterator beg, vector<T>::iterator end);` 移除[beg, end)，返回beg位置的迭代器
+```c++
+void test3()
+{
+    int iArray[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    vector<int> vecIntA(iArray, iArray + 9);
+    vector<int>::iterator it1 =  vecIntA.begin() + 2;
+    cout << *it1 << endl; // 3
+    vector<int>::iterator it2 =  vecIntA.erase(vecIntA.begin() + 2);
+    cout << *it1 << endl; // 4
+    cout << *it2 << endl; // 4
+    cout << "vecIntA: ";
+    printVector(vecIntA);// vecIntA: 1 2 4 5 6 7 8 9 
+    cout << endl;
+
+    vecIntA.erase(it2, it2 + 2);
+    cout << "vecIntA: ";
+    printVector(vecIntA); // vecIntA: 1 2 6 7 8 9
+    cout << endl;
+}
+```
+- `vec.at(idx);`返回索引idx所指的数据，如果idx越界，抛出out_of_range异常
+- `vec[idx];`返回索引idx所指的数据，越界时，运行直接报错
