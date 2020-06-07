@@ -526,7 +526,28 @@ vector<int> vecIntC(9, 1); // 容器vecIncC中有9元素，每个元素的值都
 - `vector.resize(num)` 重新指定容器的长度为num，若容器变长，则**以默认值填充新位置; 如果容器变短，则末尾超出容器长度的元素被删除**.
 - `vector.resize(num, elem)` 重新指定容器的长度为num，若容器变长，则以elem值填充新位置。如果容器变短，则末尾超出容器长度的元素被删除.
 ### 增删改查
+#### 增
 - `void push_back(element)`在容器尾部加入一个元素
+- `vector.insert(pos,elem);`在pos位置插入一个elem元素的拷贝，返回新数据的位置。
+- `vector.insert(pos,n,elem); `在pos位置插入n个elem数据，无返回值
+- `vector.insert(pos,beg,end)`在pos位置插入[beg,end)区间的数据，无返回值.
+```c++
+void test4()
+{
+    int iArray[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    vector<int> vecIntA(iArray, iArray + 9);
+    vecIntA.insert(vecIntA.end(), 10);
+    int arr[] = {11, 12, 13, 14, 15};
+    vector<int> vecIntB(arr, arr + 2);
+    vecIntA.insert(vecIntA.end(), 3, 0);
+    vecIntA.insert(vecIntA.end(), vecIntB.begin(), vecIntB.end());
+    vecIntA.insert(vecIntA.end(), arr + 2, arr + 5);
+    cout << "vecIntA: ";
+    printVector(vecIntA); // vecIntA: 1 2 3 4 5 6 7 8 9 10 0 0 0 11 12 13 14 15
+    cout << endl;
+}
+```
+#### 删
 - `void pop_back();` 移除容器中最后一个元素
 - `vector<T>::iterator it =  vector.erase(vector<T>::iterator pos);` 移除指定pos位置的元素，并返回pos位置的迭代器
 - `vector<T>::iterator it =  vector.erase(vector<T>::iterator beg, vector<T>::iterator end);` 移除[beg, end)，返回beg位置的迭代器
@@ -548,7 +569,27 @@ void test3()
     cout << "vecIntA: ";
     printVector(vecIntA); // vecIntA: 1 2 6 7 8 9
     cout << endl;
+    
+    // 用迭代器遍历删除的时候需要注意
+    for (vector<int>::iterator it = vecIntA.begin(); it != vecIntA.end(); ) //小括号里不需要写 ++it
+    {
+        if (*it == 2)
+        {
+            it = vecIntA.erase(it); // 最好是返回给自己
+        }
+        else
+        {
+            ++it; 
+        }
+    }
+    cout << "vecIntA: ";
+    printVector(vecIntA); // 1 6 7 8 9 9 9
+    cout << endl;
 }
 ```
+- `vector.clear();`移除容器的所有数据
+#### 改查
 - `vec.at(idx);`返回索引idx所指的数据，如果idx越界，抛出out_of_range异常
 - `vec[idx];`返回索引idx所指的数据，越界时，运行直接报错
+- `vector.front()`返回第一个元素的值
+- `vector.back()`返回最后一个元素
