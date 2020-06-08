@@ -80,6 +80,7 @@ Java 虚拟机（JVM）是运行 Java 字节码的虚拟机。JVM 有针对不�
 ### 1.1.6. import java 和 javax 有什么区别？
 以前javax是java的拓展，但渐渐的javax逐渐扩展为java API的一部分，现在java和javax没有区别，这都是一个名字。
 ## 1.2. 基本的语法
+java的基础语法不少于c++的基础语法一样，这里重点标明不一样的地方。
 ### 1.2.1. 基础类型及其存储空间大小
 ![java基本类型](./picture/java基本类型.png)
 - **char在java中占2个字节**
@@ -92,7 +93,7 @@ Java 虚拟机（JVM）是运行 Java 字节码的虚拟机。JVM 有针对不�
 - Byte,Short,Integer,Long包装类默认创建了数值[-128，127] 的相应类型的缓存数据，Character创建了数值在[0,127]范围的缓存数据，可以通过正常的加减乘除法和赋值，先在缓存区中找，超出了范围在创建新的对象，或者**new** 也会创建一个新的对象。
 - Boolean 直接返回True Or False，也是缓存好的
 - Byte,Short,Integer，Character自动装箱与拆箱调用valueOf
-- Float Double没有缓存，因为浮点对于他们是无限的。
+- Float Double没有缓存，因为浮点对于他们是无限的，不好提前缓存。
 ```java
 // Integer 缓存源代码
 public static Integer valueOf(int i) {
@@ -104,7 +105,7 @@ public static Integer valueOf(int i) {
 ### 1.2.2. 关键字
 - 基本与C++差不多
 - abstract 用于抽象类和函数
-- extends 用于集成
+- extends 用于继承
 - final 不可变
 - implements 实现（继承）接口
 - interface 声明接口
@@ -113,10 +114,11 @@ public static Integer valueOf(int i) {
 - transient 决绝序列化(串行化),该对象的某个变量是transient，那么这个变量不会被串行化进去.
 - import 与python和golang的import一样，导入包，类似于c++的include
 - package 与golang的package类似，申明当前文件属于哪个包的。
+> java的包名可以让编译器知道该文件在哪个位置，往往是项目相对路径，**编译它时需要在项目的根目录编译；进行反射时，类的名字是需要包含包名的**。
 - null 空
 - strictfp (不常用)可应用于类、接口或方法。使用 strictfp 关键字声明一个方法时，该方法中所有的float和double表达式都严格遵守FP-strict的限制,符合IEEE-754规范
 ### 1.2.3. 流程控制语句 
-- if else while for break continue return 与c++一致
+- if else while for break continue return 与c++一致，foreach语句与c++的有点不同。
 ### 1.2.4. 泛型
 - Java 泛型（generics）提供了**编译时类型安全检测机制**，该机制允许程序员在编译时检测到非法的类型。
 - 泛型的本质是**参数化类型**，也就是说所操作的数据类型被指定为一个参数。
