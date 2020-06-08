@@ -14,6 +14,7 @@
     - [013机器人的运动范围](#013机器人的运动范围)
     - [014剪绳子](#014剪绳子)
     - [015二进制中1的个数](#015二进制中1的个数)
+    - [034 二叉树中和为某一值的路径](#034-二叉树中和为某一值的路径)
 
 <!-- /TOC -->
 # Introduction
@@ -187,5 +188,27 @@ int NumberOf1_Solution2(int n)
     return count;
 }
 ```
+## 034 二叉树中和为某一值的路径
+- 用栈1(vector模拟)来存放节点的路径，栈2(vector模拟)来存放当前路径之和。然后递归先序遍历。
+    - 终止条件 1. 空节点 2. 叶子节点 && 路径之和等于目标值
+    ```c++
+    //终止条件
+        if (nullptr == pRoot)
+            return false;
+        
+        // 计算当前的和，并入值路径
+        int sum = numPath.back() + pRoot->m_nValue;
+        numPath.push_back(sum); // 和入栈
+        nodePath.push_back(pRoot); // 节点不为空，则入栈
+        if (nullptr == pRoot->m_pLeft && nullptr == pRoot->m_pRight && sum == target)
+            return true;
+    ```
+    - 退出时，及得出栈，**归来仍是少年** 回溯法。
+    ```c++
+    // 这个节点没找到，退出，清除值路径记录
+    numPath.pop_back();
+    nodePath.pop_back();
+    return false;
+    ```
 
 
