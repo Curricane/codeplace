@@ -15,6 +15,7 @@
     - [014剪绳子](#014剪绳子)
     - [015二进制中1的个数](#015二进制中1的个数)
     - [034 二叉树中和为某一值的路径](#034-二叉树中和为某一值的路径)
+    - [036 二叉搜索树与双向链表](#036-二叉搜索树与双向链表)
 
 <!-- /TOC -->
 # Introduction
@@ -210,5 +211,26 @@ int NumberOf1_Solution2(int n)
     nodePath.pop_back();
     return false;
     ```
+## 036 二叉搜索树与双向链表
+- 思路一:中序遍历后得到排序的列表后再构建双向链表
+- 思路二:中序遍历过程中构建双向链表
+    - 需要一个双指针模拟当前排序列表list中的最后的节点`BinaryTreeNode** pLastNodeInList`,用双指针的原因是指针的指示会变的。
+    - 递归中序遍历时，如何找到最左节点？
+    ```c++
+    // 递归遍历到当前节点的最左节点(最小值)
+    if (pCurrent->m_pLeft != nullptr)
+        ConvertNode(pCurrent->m_pLeft, pLastNodeInList);
+    ```
+    - 构建双向链表,需要注意最后节点初始值是`nullptr`
+    ```c++
+    // 找到当前最小值，当前节点左指针指向上一个节点
+    pCurrent->m_pLeft = *pLastNodeInList;
 
-
+    // 最后节点的右节点指向，找到的当前最小节点
+    if(*pLastNodeInList !=nullptr)
+        (*pLastNodeInList)->m_pRight = pCurrent;
+    ```
+    - 更新列表最后的节点`*pLastNodeInList = pCurrent;`
+    - 遍历右子树
+- **对于二叉树的问题，大都逃不过前、中、后、层次，四种遍历 + 特殊的辅助数据 + 逻辑，因此可以先确定哪种遍历，写出该遍历，再进行修改，一次完整写出比较费脑，按着遍历走，可以减少思考**。
+    
