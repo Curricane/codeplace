@@ -380,4 +380,26 @@ public Vector(int initialCapacity,int capacityIncrement)//使用指定的初始�
 - `catch`块:用于处理 try 捕获到的异常。
 - `finally`块:无论是否捕获或处理异常，finally 块里的语句都会被执行。当在 try 块或 catch 块中遇到 return 语句时，finally 语句块将在方法返回之前被执行。
 > 以下4种特殊情况，finally块不会被执行:
-1. 在finally语句块**第一行发生了异常。因为在其他行，finally块还是会得到执行。
+1. 在finally语句块**第一行发生了异常。因为在其他行，finally块还是会得到执行**。
+2. 在前面的代码中用了 System.exit(int)已退出程序。 exit 是带参函数 ；若该语句在异常语句之后，finally 会执行
+3. 程序所在的线程死亡
+4. 关闭 CPU
+- 当`try`语句和`finally`语句中都有`return`语句时，在方法返回之前`finally`语句的内容将被执行，并且`finally`语句的返回值将会覆盖原始的返回值.
+```java
+public class Test 
+{
+    public static int f(int value)
+    {
+        try
+        {
+            return value * value;
+        }
+        finally
+        {
+            if (value == 2)
+                return 0;
+        }
+    }
+}
+```
+如果调用`f(2)`，返回值将是 0，因为`finally`语句的返回值覆盖了`try`语句块的返回值.
