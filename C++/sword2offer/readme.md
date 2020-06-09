@@ -16,6 +16,7 @@
     - [015二进制中1的个数](#015二进制中1的个数)
     - [034 二叉树中和为某一值的路径](#034-二叉树中和为某一值的路径)
     - [036 二叉搜索树与双向链表](#036-二叉搜索树与双向链表)
+    - [038 字符串的全排列](#038-字符串的全排列)
 
 <!-- /TOC -->
 # Introduction
@@ -233,4 +234,32 @@ int NumberOf1_Solution2(int n)
     - 更新列表最后的节点`*pLastNodeInList = pCurrent;`
     - 遍历右子树
 - **对于二叉树的问题，大都逃不过前、中、后、层次，四种遍历 + 特殊的辅助数据 + 逻辑，因此可以先确定哪种遍历，写出该遍历，再进行修改，一次完整写出比较费脑，按着遍历走，可以减少思考**。
-    
+## 038 字符串的全排列
+- 利用递归，N长度的字符串的全排列 = 首位分别与其他为交换，再全排列n-1长度的字符串
+- 使用递归的时候，注意退出该递归的时候需要**退回来的样子**
+```c++
+void Permutation(char *pStr, char *pBegin)
+{
+    if ('\0' ==  *pBegin)
+    {
+        printf("%s\n", pStr);
+    }
+    else
+    {
+        for (char* pCh = pBegin; *pCh != '\0'; ++pCh)
+        {
+            // 与首位字符交换
+            char temp = *pCh;
+            *pCh = *pBegin;
+            *pBegin = temp;
+
+            Permutation(pStr, pBegin + 1);
+
+            // 递归回来后，变回原来的位置
+            temp = *pCh;
+            *pCh = *pBegin;
+            *pBegin = temp;
+        }
+    }
+}
+```
