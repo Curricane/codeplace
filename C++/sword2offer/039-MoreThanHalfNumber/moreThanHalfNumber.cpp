@@ -135,21 +135,22 @@ void quickSortCore(int* arr, int l, int r)
     int a = arr[start];
     while(start < end)
     {
+        // 双向扫描，选择头为pivot，则先从末尾开始扫描
         while(start < end && arr[end] >= a)
-            --end;
-        if (start < end)
         {
-            arr[start] = arr[end];
+            --end;
+        }
+            
+        arr[start] = arr[end]; // 不用担心越界问题，最多start == end
+        //++start; // 不加if判断不能写这条语句
+ 
+        while(start < end && arr[start] < a)
+        {
             ++start;
         }
-
-        while(start < end && arr[start] < a)
-            ++start;
-        if (start < end)
-        {
-            arr[end] = arr[start];
-            -- end;
-        }    
+            
+        arr[end] = arr[start];
+        //-- end; 
     }
 
     arr[start] = a;
@@ -178,16 +179,16 @@ void printArr(int *arr, int len)
 
 void TestQuickSort()
 {
-    int arr1[] = {3, 9 , 4, 6, 1};
+    int arr1[] = {2, 9 , 4, 6};
     int arr2[] = {1};
     int arr3[] = {2,2,2, 1,1,1,1};
 
-    quickSort(arr1, 5);
+    quickSort(arr1, 4);
     quickSort(arr2, 1);
     quickSort(arr3, 7);
 
     std::cout << "arr1 :";
-    printArr(arr1, 5);
+    printArr(arr1, 4);
     std::cout << std::endl;
 
     std::cout << "arr2 :";
@@ -270,7 +271,7 @@ void Test6()
 
 int main(int argc, char* argv[])
 {
-    //TestQuickSort();
+    TestQuickSort();
     Test1();
     Test2();
     Test3();
