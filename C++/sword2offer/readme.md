@@ -18,6 +18,7 @@
     - [036 二叉搜索树与双向链表](#036-二叉搜索树与双向链表)
     - [038 字符串的全排列](#038-字符串的全排列)
     - [039 数组中出现次数超过一半的数字](#039-数组中出现次数超过一半的数字)
+    - [040 最小的k个数](#040-最小的k个数)
 
 <!-- /TOC -->
 # Introduction
@@ -307,3 +308,49 @@ void Permutation(char *pStr, char *pBegin)
         start = mid + 1;
     }
     ```
+## 040 最小的k个数
+- 思路一：用优先级队列
+```c++
+void GetLeastNumbers_Solution1(int* input, int n, int* output, int k)
+{
+    if (nullptr == input || n <= 0 || output == nullptr || k <= 0)
+        return;
+
+    priority_queue(beg,end)
+    std::priority_queue<int, std::vector<int>, std::greater<int> > priorQ(input, input + n);
+
+    for (int i = 0; i < k; ++i )
+    {
+        output[i] = priorQ.top();
+        priorQ.pop();
+    }
+}
+```
+- 思路二： 用快速排序的变种，排序前K个
+```c++
+void GetLeastNumbers_Solution2(int* input, int n, int* output, int k)
+{
+    if (nullptr == input || n <= 0 || output == nullptr || k <= 0)
+        return;
+    
+    int start = 0;
+    int end = n - 1;
+    int index = Partition(input, n, start, end); //快速排序start-end，并返回排序后的分割点index
+    while(index != k - 1)
+    {
+        if(index > k - 1)
+        {
+            end = index - 1;
+            index = Partition(input, n, start, end);
+        }
+        else
+        {
+            start = index + 1;
+            index = Partition(input, n, start, end);
+        }
+    }
+
+    for(int i = 0; i < k; ++i)
+        output[i] = input[i];
+}
+```
