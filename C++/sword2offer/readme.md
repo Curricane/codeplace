@@ -17,6 +17,7 @@
     - [034 二叉树中和为某一值的路径](#034-二叉树中和为某一值的路径)
     - [036 二叉搜索树与双向链表](#036-二叉搜索树与双向链表)
     - [038 字符串的全排列](#038-字符串的全排列)
+    - [039 数组中出现次数超过一半的数字](#039-数组中出现次数超过一半的数字)
 
 <!-- /TOC -->
 # Introduction
@@ -263,3 +264,46 @@ void Permutation(char *pStr, char *pBegin)
     }
 }
 ```
+## 039 数组中出现次数超过一半的数字
+- 思路一：排序后找中间位置的值，统计它是不是超过了长度一半
+    - 借助快速排序进行排序
+    ```c++
+    void quickSortCore(int* arr, int l, int r)
+    {
+        int start = l;
+        int end = r;
+        if (start >= end)
+            return;
+        int a = arr[start];
+        while(start < end)
+        {
+            // 双向扫描，选择头为pivot，则先从末尾开始扫描
+            while(start < end && arr[end] >= a)
+            {
+                --end;
+            }   
+            arr[start] = arr[end]; // 不用担心越界问题，最多start == end
+            //++start; // 不加if判断不能写这条语句
+    
+            while(start < end && arr[start] < a)
+            {
+                ++start;
+            }  
+            arr[end] = arr[start];
+            //-- end; 
+        }
+        arr[start] = a;
+        quickSortCore(arr, l, start - 1);
+        quickSortCore(arr, start + 1, r);
+    }
+    ```
+    - 借助二分查找法的变体进行查找起始终止下标
+    ```c++
+    if (arr[mid] == target )
+    {
+        // 关键一步，判断是不是结尾
+        if (mid == len -1 || arr[mid + 1] != target)
+            return mid;
+        start = mid + 1;
+    }
+    ```
