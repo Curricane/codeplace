@@ -58,6 +58,7 @@
             - [1.3.2.1. java异常类层次结构图](#1321-java异常类层次结构图)
             - [1.3.2.2. Throwable 类常用方法](#1322-throwable-类常用方法)
             - [1.3.2.3. try-catch-finally](#1323-try-catch-finally)
+            - [1.3.2.4. 使用`try-with-resources`来代替`try-catch-finally`](#1324-使用try-with-resources来代替try-catch-finally)
 
 <!-- /TOC -->
 # 1. Java基础
@@ -403,3 +404,40 @@ public class Test
 }
 ```
 如果调用`f(2)`，返回值将是 0，因为`finally`语句的返回值覆盖了`try`语句块的返回值.
+#### 1.3.2.4. 使用`try-with-resources`来代替`try-catch-finally`
+> 面对必须要关闭的资源，我们总是应该优先使用`try-with-resources`而不是`try-finally`。随之产生的代码更简短，更清晰，产生的异常对我们也更有用。`try-with-resources`语句让我们更容易编写必须要关闭的资源的代码，若采用`try-finally`则几乎做不到这点。
+- `try-finally`关闭资源的方式
+```java
+Scanner scanner = null; // 需要在try-finally先申明资源
+try
+{
+    scanner = new Scanner(new File("/data/read.txt"));
+    while (scanner.hasNext())
+    {
+        System.out.println(scanner.nextLine());
+    }
+}
+catch (FileNotFoundException e)
+{
+    e.printStackTrace();
+}
+finally 
+{
+    if (scanner != null) 
+        scanner.close();
+}
+```
+- `try-with-resources`释放资源
+``` java
+try (Scanner scanner = new Scanner(new File("text.txt"))) //在这里申明资源
+{
+    while (scanner.hasNext())
+    {
+        System.out.println(scanner.nextLine());
+    }
+}
+catch (FileNotFoundException e)
+{
+    e.printStackTrace();
+}
+```
