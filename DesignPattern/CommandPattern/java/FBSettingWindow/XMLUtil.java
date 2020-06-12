@@ -2,7 +2,7 @@ package DesignPattern.CommandPattern.java.FBSettingWindow;
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+
 import java.io.*;
 
 public class XMLUtil
@@ -41,5 +41,41 @@ public class XMLUtil
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void readVoipXml(String fpath)
+    {
+        if (null == fpath)
+            return;
+        try
+        {
+            File file = new File(fpath);
+            if (!file.exists() ||  !file.canRead())
+            {
+                // LogUtils.e(fpath + "is not exists or can not read");
+                return;
+            }
+
+            // 创建文档对象
+            DocumentBuilderFactory dFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = dFactory.newDocumentBuilder();
+            Document doc;
+            doc = builder.parse(file);
+
+            // 获取包含类名的文本节点
+            Element sipAccount = (Element)doc.getElementsByTagName("SipAccount").item(0);
+
+            String HOST = sipAccount.getElementsByTagName("host").item(0).getTextContent();
+            String PASSWORD = sipAccount.getElementsByTagName("password").item(0).getTextContent();
+            String USER = sipAccount.getElementsByTagName("user").item(0).getTextContent();
+
+            System.out.println(HOST + " " + PASSWORD + " " + USER);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return;
+        }
+   
     }
 }

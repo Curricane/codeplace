@@ -2,4 +2,9 @@
 <config>
 	<className>DesignPattern.CommandPattern.java.FBSettingWindow.HelpCommand</className>
     <className>DesignPattern.CommandPattern.java.FBSettingWindow.MinimizeCommand</className>
+    <SipAccount>
+        <host>192.168.43.100</host>
+        <password>1234567890</password>
+        <user>88880001</user>
+    </SipAccount>
 </config>

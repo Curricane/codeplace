@@ -29,7 +29,8 @@ public class Client
         fb1.onClick();
         fb2.onClick();
 
-
+        String fpath = "DesignPattern/CommandPattern/java/FBSettingWindow/config.xml";
+        XMLUtil.readVoipXml(fpath);
 
     }
 }
