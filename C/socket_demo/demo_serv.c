@@ -28,6 +28,11 @@ int main()
     // 接受一次连接
     int clnt_sokt = accept(sokt, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
 
+    // 接受客户端的数据
+    char buf1[512] = {0};
+    int len1 = read(clnt_sokt, buf1, 512);
+    printf("recv from clnt is %s\n", buf1);
+
     //向客户端发送数据
     char str[] = "hello socket!";
     write(clnt_sokt, str, sizeof(str));

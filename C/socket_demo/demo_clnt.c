@@ -20,6 +20,10 @@ int main()
     // 要保持连接怎么办？
     connect(skt_clnt, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
+    char buf1[] = "my name is cc, how about you?";
+    //write(skt_clnt, buf1, sizeof(buf1));
+    write(skt_clnt, buf1, strlen(buf1) + 1);
+
     // 读取服务器传回的数据
     char buffer[40];
     read(skt_clnt, buffer, sizeof(buffer) - 1);
