@@ -15,7 +15,9 @@ int main()
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(1234);
     
-    // 连接服务器
+    // 连接服务器,通过 connect() 向服务器发起请求，服务器的IP地址和端口号保存在 sockaddr_in 结构体中。
+    // 直到服务器传回数据后，connect() 才运行结束。
+    // 要保持连接怎么办？
     connect(skt_clnt, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
     // 读取服务器传回的数据

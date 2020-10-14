@@ -24,6 +24,8 @@ int main()
     // 接受客户端请求
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
+
+    // 接受一次连接
     int clnt_sokt = accept(sokt, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
 
     //向客户端发送数据
