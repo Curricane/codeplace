@@ -111,7 +111,60 @@ else:
 - Python标准的解释器没有针对尾递归做优化，任何递归函数都存在栈溢出的问题。
 ### 高级特性
 #### 切片
+- l[l:r] 左闭右开，l[r]不在截取范围，截取长度为：r - l，l为空则从0开始，r为空则到末尾，r可以为负数，-1表示len-1
+- l[:] 截取整个list，相当于复制了一份
+- l[l:r:step] step表示步长，如l[::2]意味每第两截取
 #### 迭代
+- 可迭代对象通过collections模块的Iterable类型判断
+```pyhton3
+from collections import Iterable
+isinstance('abc', Iterable)
+# True
+- Python内置的enumerate函数可以把一个list变成索引-元素对
+```
 #### 列表生成式
+- 常规 [x * x for x in range(1, 11)]
+```python
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+```
+- 有if [x for x in range(1, 11) if x % 2 == 0]
+```python
+[2, 4, 6, 8, 10]
+```
+- 有if else，if else写在for前头[x if x % 2 == 0 else -x for x in range(1, 11)]
+```python
+[-1, 2, -3, 4, -5, 6, -7, 8, -9, 10]
+```
+- for 循环嵌套 ->全排列 [x + y for x in 'ab' for y in 'cd']
+```python
+['ac', 'ad', 'bc', 'bd']
+```
 #### 生成器
+- 列表生成式的[]换成()就是生成器
+- 含有yield的函数
+- 可以通过next()函数获得generator的下一个返回值，没有更多的元素时，抛出StopIteration的错误
+```
+>>> def odd():
+...   print('step 1')
+...   yield 1
+...   print('step 2')
+...   yield 2
+...   print('step 3')
+...   yield 3
+>>> o = odd()
+>>> next(o)
+step 1
+1
+>>> next(o)
+step 2
+2
+>>> next(o)
+step 3
+3
+>>> next(o)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+>>> 
+```
 #### 迭代器
