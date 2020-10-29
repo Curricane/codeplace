@@ -293,4 +293,74 @@ max(*args)
 - 添加自己的搜索目录
 	> 直接修改sys.path`sys.path.append('path')
 	> 设置环境变量`PYTHONPATH`
-	
+### 面向对象编程
+- 类（Class），抽象的模板
+- 实例（Instance），具体的“对象”
+- 属性（Property）
+- 数据封装、继承、多态是面对对象的三大特征
+#### 访问限制
+- `__init__`类似构造函数，第一个参数是`self`类似this，创建时则不用加入self参数
+- `__`开头的变量是私有变量，只有内部可以访问，不能访问的原因是，解释器会吧`__xx`变量改为`_classname__xxx`
+#### 继承和多态
+- class Dog(Animal): 继承
+#### 获取对象信息
+- type() 判断对象类型
+- 判断基本数据类型可以直接写int，str等
+- 判断一个对象是否是函数 import types
+```python
+>>> import types
+>>> def fn():
+...     pass
+...
+>>> type(fn)==types.FunctionType
+True
+>>> type(abs)==types.BuiltinFunctionType
+True
+>>> type(lambda x: x)==types.LambdaType
+True
+>>> type((x for x in range(10)))==types.GeneratorType
+True
+```
+- `isinstance()`一个对象是否是某种类型(它的子类)
+- 使用dir()获得一个对象的所有属性和方法`dir(Student)`
+- getattr() setattr() hasattr()
+```python
+>>> hasattr(obj, 'x') # 有属性'x'吗？
+True
+>>> obj.x
+9
+>>> hasattr(obj, 'y') # 有属性'y'吗？
+False
+>>> setattr(obj, 'y', 19) # 设置一个属性'y'
+>>> hasattr(obj, 'y') # 有属性'y'吗？
+True
+>>> getattr(obj, 'y') # 获取属性'y'
+19
+>>> obj.y # 获取属性'y'
+19
+```
+- `__len__` 长度
+- Python是动态语言，根据类创建的实例可以任意绑定属性
+```python
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+
+s = Student('Bob')
+s.score = 90 #实例动态增加属性
+del s.score #删除实例的name属性
+```
+#### 使用类的全局属性
+- 实例属性属于各个实例所有，互不干扰
+- 类属性属于类所有，所有实例共享一个属性
+- 不要对实例属性和类属性使用相同的名字，否则将产生难以发现的错误
+	- 相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性
+```python
+class Student(object):
+    count = 0
+
+    def __init__(self, name):
+        self.name = name
+        Student.count += 1 #使用类的全局属性
+```
+### 面向对象高级编程
