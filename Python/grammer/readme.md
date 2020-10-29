@@ -168,3 +168,89 @@ StopIteration
 >>> 
 ```
 #### 迭代器
+- Iterable对象
+	- 一类是集合数据类型，如list、tuple、dict、set、str等
+	- 一类是generator，包括生成器和带yield的generator function
+- Iterator：可以被next()函数调用并不断返回下一个值的对象称为迭代器：Iterator
+### 函数式编程
+- 纯粹的函数式编程语言编写的函数`没有变量`，因此，任意一个函数，只要输入是确定的，输出就是确定的，这种纯函数我们称之为没有副作用。而允许使用变量的程序设计语言，由于函数内部的变量状态不确定，同样的输入，可能得到不同的输出，因此，这种函数是有副作用的.
+- 允许把函数本身作为参数传入另一个函数，还允许返回一个函数
+#### 高阶函数
+- map 
+	- 将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回
+```python3
+list(map(lambda x: x*x, [x for x in range(11)]))
+out[3]:[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+```
+- reduce
+	- reduce把结果继续和序列的下一个元素做累积计算
+```python3
+reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
+f 必须能接收两个参数
+```
+- sorted
+	- 接收一个key函数来实现自定义的排序, key指定的函数将作用于list的每一个元素上，并根据key函数返回的结果进行排序
+```python3
+sorted([36, 5,-12, 9. -12], key=abs)
+```
+- filter
+	- 内建的filter()函数用于过滤序列
+	- filter()把传入的函数依次作用于每个元素，然后根据返回值是True还是False决定保留还是丢弃该元素
+#### 匿名函数
+- 关键字lambda表示匿名函数，冒号前面的表示函数参数
+- 匿名函数有个限制，`只能有一个表达式，不用写return，返回值就是该表达式的结果`
+```python3
+def build(x, y)
+	return lambda: x*x + y*y
+```
+#### 返回函数
+- 不立即返回结果，等调用时再执行
+```python3
+def calc_sum(*args):
+	def sum():
+		ax = 0
+		for n in args:
+			ax = ax + n
+		return ax
+	return sum 
+f = calc_sum(1,2,3,4,5) #此时不执行
+f() #这一步再执行
+```
+- 闭包
+	- 返回的函数在其定义内部引用了局部变量args，所以，当一个函数返回了一个函数后，其内部的局部变量还被新函数引用,且使用的是该变量的最后状态
+```python3
+In [35]: def createCounter(): 
+    ...:     count = 1 
+    ...:     def counter(): 
+    ...:         nonlocal count 
+    ...:         count += 1 
+    ...:         return count 
+    ...:     return counter
+```
+### 装饰器
+- 本质上，decorator就是一个返回函数的高阶函数
+- 在函数原有的功能上，外包一个函数，执行新增功能，和原函数
+```python3
+# 定义一个decorator，参数是函数
+def log(func):
+  def wrapper(*args, **kw): #外包的函数，增加新功能 并返回参数函数func的调用
+    print('call %s()' % func.__name__) #新增的功能
+	return func(*args, **kw) #真正的执行语句
+  return wrapper #返回函数。目的是等到调用时再执行
+
+# 使用该decorator @+decorator名字+ 放到要装饰的函数上
+@log
+def now():
+  print('2020-10-29')
+```
+- 如果decorator本身需要传入参数，那就需要编写一个返回decorator的高阶函数，写出来会更复杂
+```
+def log(text):
+    def decorator(func):
+        def wrapper(*args, **kw):
+            print('%s %s():' % (text, func.__name__))
+            return func(*args, **kw)
+        return wrapper
+    return decorator
+```
+- 在面向对象（OOP）的设计模式中，decorator被称为装饰模式。OOP的装饰模式需要通过继承和组合来实现，而Python除了能支持OOP的decorator外，直接从语法层次支持decorator。Python的decorator可以用函数实现，也可以用类实现。
