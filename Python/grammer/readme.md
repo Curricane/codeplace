@@ -254,3 +254,22 @@ def log(text):
     return decorator
 ```
 - 在面向对象（OOP）的设计模式中，decorator被称为装饰模式。OOP的装饰模式需要通过继承和组合来实现，而Python除了能支持OOP的decorator外，直接从语法层次支持decorator。Python的decorator可以用函数实现，也可以用类实现。
+### 偏函数
+- `functools.partial`，把一个函数的某些参数给固定住（也就是设置默认值），返回一个新的函数，调用这个新函数会更简单。
+- 创建偏函数时，实际上可以接收函数对象、*args和**kw这3个参数
+```
+int2 = functools.partial(int, base=2)
+实际上固定了int()函数的关键字参数base，也就是
+int2('10010')
+相当于：
+kw = { 'base': 2 }
+int('10010', **kw)
+当传入：
+max2 = functools.partial(max, 10)
+实际上会把10作为*args的一部分自动加到左边，也就是：
+max2(5, 6, 7)
+相当于：
+args = (10, 5, 6, 7)
+max(*args)
+结果为10。
+```
