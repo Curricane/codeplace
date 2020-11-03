@@ -64,7 +64,7 @@ else:
 	- funcname(args)
 	- 参数不对时，会报TypeError
 - 返回值
-	- 可以返回多个返回值 return nx, ny
+	- 可以返回多个返回值 return nx, ny，返回的其实是个元组
 	- 没有return时，默认返回None
 - 函数参数
 	- 链接：https://www.liaoxuefeng.com/wiki/1016959663602400/1017261630425888
@@ -364,3 +364,113 @@ class Student(object):
         Student.count += 1 #使用类的全局属性
 ```
 ### 面向对象高级编程
+- 给class绑定方法
+	> 类名.func = func
+- 在类中，限制实例的的属性 `__slots__`
+```python
+class Student(object):
+	__slots__ = ('name', 'age') # 用tuple定义允许绑定的属性名称
+```
+- `@property`内置装饰器，负责把一个方法变成属性调用
+```python
+class Student(object):
+    @property
+    def birth(self):
+        return self._birth
+    @birth.setter
+    def birth(self, value):
+        self._birth = value
+    @property
+    def age(self):
+        return 2015 - self._birth
+```
+#### 多重继承
+- 通过多重继承，一个子类就可以同时获得多个父类的所有功能。
+```python
+class Bat(Mammal, Flyable):pass
+```
+- MixIn 
+	- MixIn的目的就是给一个类增加多个功能，这样，在设计类的时候，我们优先考虑通过多重继承来组合多个MixIn的功能，而不是设计多层次的复杂的继承关系
+```
+在设计类的继承关系时，通常，主线都是单一继承下来的，例如，Ostrich继承自Bird。但是，如果需要“混入”额外的功能，通过多重继承就可以实现，比如，让Ostrich除了继承自Bird外，再同时继承Runnable。这种设计通常称之为MixIn
+```
+#### 定制类
+- `__slots__`
+- `__str__` print会调用它 返回用户看到的字符串
+	- `__repr__` 返回程序开发者看到的字符串，一般他们一样
+```python
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return 'Student object (name=%s)' % self.name
+    __repr__ = __str__
+```
+- `__iter__` 
+	- 如果一个类想被用于for ... in循环，类似list或tuple那样，就必须实现一个__iter__()方法，该方法返回一个迭代对象，然后，Python的for循环就会不断调用该迭代对象的__next__()方法拿到循环的下一个值，直到遇到StopIteration错误时退出循环。
+
+```python
+class Fib(object):
+    def __init__(self):
+        self.a, self.b = 0, 1 # 初始化两个计数器a，b
+
+    def __iter__(self):
+        return self # 实例本身就是迭代对象，故返回自己
+
+    def __next__(self):
+        self.a, self.b = self.b, self.a + self.b # 计算下一个值
+        if self.a > 100000: # 退出循环的条件
+            raise StopIteration()
+        return self.a # 返回下一个值
+```
+- `__getitem__` 把它当成list来使用还是不行
+```python
+class Fib(object):
+    def __getitem__(self, n):
+        if isinstance(n, int): # n是索引
+            a, b = 1, 1
+            for x in range(n):
+                a, b = b, a + b
+            return a
+        if isinstance(n, slice): # n是切片
+            start = n.start
+            stop = n.stop
+            if start is None:
+                start = 0
+            a, b = 1, 1
+            L = []
+            for x in range(stop):
+                if x >= start:
+                    L.append(a)
+                a, b = b, a + b
+            return L
+```
+- `__getattr__` 当调用不存在的属性时，动态返回一个属性，默认返回None，如果要只响应几个属性，可以抛出`AttributeError`的错误
+```python
+class Student(object):
+	def __getattr__(self, attr):
+		if attr == 'age':
+			return lambda: 25
+		raise AttributeError('\'Student\' object has no attribute \'%s\'' % attr)
+```
+> 利用完全动态的__getattr__，我们可以写出一个链式调用
+```python
+class Chain(object):
+	def __init__(self, path=''):
+		self._path = path
+	def __getattr__(self, path):
+		return Chain('%s/%s' % (self._path, path))
+	def __str__(self):
+		return self._path
+	__repr__ = __str__
+```
+- `__call__` 直接对实例进行调用
+```python
+class Student(object):
+	def __init__(self, name):
+		self.name = name
+	def __call__(self):
+		print('My name is %s.' % self.name)
+s = Student('cmc')
+s() # My name is cmc
+```
