@@ -474,3 +474,56 @@ class Student(object):
 s = Student('cmc')
 s() # My name is cmc
 ```
+#### 使用枚举类
+- 方式一 `from enum import Enum` instance = Enum(Name, (names,))
+	- value属性则是自动赋给成员的int常量，默认从1开始计数
+```python
+from enum import Enum
+l = Enum('L', ('l1', 'l2', 'l3', 'l4'))
+for name, member in l.__members__.items():
+	print(name, '=>', member, ',', member.value)
+l1 => L.l1 , 1
+l2 => L.l2 , 2
+l3 => L.l3 , 3
+l4 => L.l4 , 4
+```
+- 方式二 从Enum派生出自定义类
+```python
+@unique #@unique装饰器可以帮助我们检查保证没有重复值
+class Weekday(Enum):
+	# 写在所有函数外头
+    Sun = 0 # Sun的value被设定为0
+    Mon = 1
+    Tue = 2
+    Wed = 3
+    Thu = 4
+    Fri = 5
+    Sat = 6
+
+>>> day1 = Weekday.Mon
+>>> print(day1)
+Weekday.Mon
+>>> print(Weekday.Tue)
+Weekday.Tue
+>>> print(Weekday['Tue'])
+Weekday.Tue
+>>> print(Weekday.Tue.value)
+2
+>>> print(day1 == Weekday.Mon)
+True
+
+```
+#### 使用元类
+- type()函数不仅可以查看类型，还可以创建类
+	- class的定义是运行时动态创建的，而创建class的方法就是使用type()函数
+	```python
+	def fn(self, name='world'):
+		print('Hello, %s.' % name)
+	Hello = type('Hello', (object,), dict(hello=fn)) #创建Hello class
+	```
+	- type()函数依次传入3个参数：
+		> class的名称
+		> 继承的父类集合，注意Python支持多重继承，如果只有一个父类，别忘了tuple的单元素写法
+		> class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上
+- metaclass
+	- 待学习
