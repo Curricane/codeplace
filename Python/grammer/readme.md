@@ -527,3 +527,151 @@ True
 		> class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上
 - metaclass
 	- 待学习
+### 错误、调试和测试
+#### 异常
+- 与java异常使用类似
+```python
+try:
+    print('try...')
+    r = 10 / int('a')
+    print('result:', r)
+except ValueError as e:
+    print('ValueError:', e)
+except ZeroDivisionError as e:
+    print('ZeroDivisionError:', e)
+finally:
+    print('finally...')
+print('END')
+```
+- 多了没有异常时，可以有`else`语句，如果有finally语句，最后也会执行
+```python
+try:
+    print('try...')
+    r = 10 / int('2')
+    print('result:', r)
+except ValueError as e:
+    print('ValueError:', e)
+except ZeroDivisionError as e:
+    print('ZeroDivisionError:', e)
+else:
+    print('no error!')
+finally:
+    print('finally...')
+print('END')
+'''
+try...
+result: 5.0
+no error!
+finally...
+END
+'''
+```
+- 抛出异常 	`raise`
+	> 错误并不是凭空产生的，而是有意创建并抛出的
+	> 如果要抛出错误，首先根据需要，可以定义一个错误的class，选择好继承关系，然后，用raise语句抛出
+	```python
+	class FooError(ValueError):
+    	pass
+
+	def foo(s):
+		n = int(s)
+		if n==0:
+			raise FooError('invalid value: %s' % s)
+		return 10 / n
+
+	foo('0')
+	```
+- 使用异常的好处
+	> 可以跨越多层调用，比如函数main()调用bar()，bar()调用foo()，结果foo()出错了，这时，只要main()捕获到了
+- 调用栈
+	> 如果错误没有被捕获，它就会一直往上抛，最后被Python解释器捕获，打印一个错误信息
+- 接受异常并抛出
+	- 捕获错误目的只是记录一下，便于后续追踪。但是，由于当前函数不知道应该怎么处理该错误，所以，最恰当的方式是继续往上抛，让顶层调用者去处理
+	```python
+	def foo(s):
+    n = int(s)
+    if n==0:
+        raise ValueError('invalid value: %s' % s)
+    return 10 / n
+
+	def bar():
+		try:
+			foo('0')
+		except ValueError as e:
+			print('ValueError!')
+			raise
+
+	bar()
+	```
+#### 调试
+- 日志
+	- import logging
+	```python
+	logging.basicConfig(level=logging.INFO) # debug，info，warning，error
+	logging.info('n = %d' % n)
+	```
+- 断言
+	- assert 如 `assert n != 0, 'n is zero!'`
+	- 断言的开关“-O”是英文大写字母O，不是数字0 `$ python -O err.py`
+- pdb 调试器类似 gdb
+	> python3 -m pdb multiprocessiong_demo.py
+	> 代码中设置断点 pdb.set_trace()
+	```python
+	import pdb
+	s = '0'
+	n = int(s)
+	pdb.set_trace() # 运行到这里会自动暂停
+	print(10 / n)
+	```
+#### 单元测试 unittest
+- 为了编写单元测试，我们需要引入Python自带的unittest模块`import unittest`
+- 自己编写一个继承`unittest.TestCase`的类
+	> 类中以`test`开头的方法才会被测试`def test_hello():`
+	> `setUp`与`tearDown`方法会分别在每调用一个测试方法的前后分别被执行，如数据库的连接、关闭
+	> `unittest.TestCase`提供了很多内置的条件判断，可以帮助判断输出是否满足
+		> `assertEqual()` 断言输出是否是我们所期望的
+		> `with self.assertRaises(KeyError):value = d['empty']` 期待抛出指定类型的Error
+#### 文档测试
+- `Python内置的`“文档测试”（doctest）模块可以直接提取注释中的代码并执行测试
+- `doctest严格`按照Python交互式命令行的输入和输出来判断测试结果是否正确.只有测试异常的时候，可以用`...`表示中间一大段烦人的输出。
+```python
+# mydict2.py
+class Dict(dict):
+    '''
+    Simple dict but also support access as x.y style.
+
+    >>> d1 = Dict()
+    >>> d1['x'] = 100
+    >>> d1.x
+    100
+    >>> d1.y = 200
+    >>> d1['y']
+    200
+    >>> d2 = Dict(a=1, b=2, c='3')
+    >>> d2.c
+    '3'
+    >>> d2['empty']
+    Traceback (most recent call last):
+        ...
+    KeyError: 'empty'
+    >>> d2.empty
+    Traceback (most recent call last):
+        ...
+    AttributeError: 'Dict' object has no attribute 'empty'
+    '''
+    def __init__(self, **kw):
+        super(Dict, self).__init__(**kw)
+
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(r"'Dict' object has no attribute '%s'" % key)
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+if __name__=='__main__':
+    import doctest
+    doctest.testmod()
+```
