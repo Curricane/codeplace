@@ -675,3 +675,82 @@ if __name__=='__main__':
     import doctest
     doctest.testmod()
 ```
+### IO编程
+#### 文件读写
+- 读文件
+	> 打开文件`f = open('/Users/michael/test.txt', 'r')`
+	> 打开二进制文件`f = open('/Users/michael/test.txt', 'rb')`
+	> 打开特定字符文件`f = open('/Users/michael/gbk.txt', 'r', encoding='gbk')`
+		> 读文件全部内容`f.read()`
+		> f.read(size) 每次最多读取size个字节的内容
+		> f.readline() 每次读取一行内容
+		> f.readlines() 次读取所有内容并按行返回list
+	> 一旦出错，后面的f.close()就不会调用,使用try ... finally来解决这个问题，或者with语句自动帮我们调用close()方法
+	```python
+	try:
+    	f = open('/path/to/file', 'r')
+    	print(f.read())
+	finally:
+		if f:
+			f.close()
+	
+	#with 语句
+	with open('/path/to/file', 'r') as f:
+    print(f.read())
+	```
+	> `IOError`
+	> file-like Object
+		> 像open()函数返回的这种有个read()方法的对象，在Python中统称为file-like Object
+- 写文件
+	> 写文件和读文件是一样的，唯一区别是调用open()函数时，传入标识符'w'或者'wb'表示写文本文件或写二进制文件，以及encoding参数
+	- 可以配合with语句
+#### StringIO和BytesIO
+- `from io import StringIO`
+	- f = StringIO()
+	- f.write('hello')
+	- f.getvalue() getvalue()方法用于获得写入后的str。
+- 要读取StringIO，可以用一个str初始化StringIO，然后，像读文件一样读取，无需open
+```python
+f = StringIO('Hello!\nHi!\nGoodbye!')
+while True:
+	s = f.readline()
+	if s == '':
+		break
+```
+- BytesIO 操作二进制数据，就需要使用BytesIO
+	> BytesIO实现了在内存中读写bytes，我们创建一个BytesIO，然后写入一些bytes
+	> StringIO类似，可以用一个bytes初始化BytesIO，然后，像读文件一样读取
+#### 操作文件和目录
+- os模块的某些函数是跟操作系统相关
+	> uname()函数在Windows上不提供
+- `os.environ`在操作系统中定义的环境变量
+- `os.path`操作文件和目录的函数
+	> 查看当前目录的绝对路径`os.path.abspath('.')`
+	> 在某个目录下创建一个新目录
+	```python
+	os.path.join('/Users/michael', 'testdir') #可以正确处理不同操作系统的路径分隔符
+	os.mkdir('/Users/michael/testdir') #创建一个目录
+	os.rmdir('/Users/michael/testdir') #删掉一个目录
+	```
+- `os.rename('test.txt', 'test.py')`
+- `os.remove('test.py')`
+- `shutil模块`提供了`copyfile()`的函数，它们可以看做是os模块的补充。
+#### 序列化
+- `pickle`
+	> pickle.dumps()方法把任意对象序列化成一个bytes，然后，就可以把这个bytes写入文件。
+	> pickle.dump()直接把对象序列化后写入一个file-like Object
+	```python
+	import pickle
+	d = dict(name='Bob', age=20, score=88)
+	pickle.dumps(d)
+
+	with open('dump.txt', 'wb') as f:
+	pickle.dump(d, f)
+	``` 
+	> pickle.loads()方法反序列化出对象
+	> pickle.load()方法从一个file-like Object中直接反序列化出对象
+- JSON
+	> import json
+	> json.dumps(d) #d字典
+	> json.loads(json_str)
+	> json.dumps(s, default=student2dict) #把特定的对象序列化
