@@ -974,3 +974,43 @@ assert t2 == 1433121030.0, t2
 		c[ch] = c[ch] + 1
 	c.update('hello')
 	```
+#### Base64
+- import base64
+- Base64是一种任意二进制到文本字符串的编码方法，常用于在URL、Cookie、网页中传输少量二进制数据
+- Base64是一种通过查表的编码方法，不能用于加密，即使使用自定义的编码表也不行
+- base64.b64encode(b'binary\x00string')
+- base64.b64decode(b'YmluYXJ5AHN0cmluZw==')
+- 标准的Base64编码后可能出现字符+和/，在URL中就不能直接作为参数，所以又有一种"url safe"的base64编码
+	> base64.urlsafe_b64encode(b'i\xb7\x1d\xfb\xef\xff')
+	> base64.urlsafe_b64decode('abcd--__')
+#### hashlib
+- import hashlib
+- md5
+	> md5 = hashlib.md5()
+	> md5.update('how to use md5 in '.encode('utf-8'))
+	> md5.update('python hashlib?'.encode('utf-8'))
+	> print(md5.hexdigest())
+- SHA1
+	> sha1 = hashlib.sha1()
+	> sha1.update('how to use sha1 in '.encode('utf-8'))
+	> sha1.update('python hashlib?'.encode('utf-8'))
+	> print(sha1.hexdigest())
+	> 比SHA1更安全的算法是SHA256和SHA512，不过越安全的算法不仅越慢，而且摘要长度更长
+	> 模拟登陆 https://www.liaoxuefeng.com/wiki/1016959663602400/1017686752491744
+#### hmac
+- import hmac
+```python
+import hmac
+message = b'2333'
+key = b'secret' # 如果是字符串，需要.encode('utf-8')变为字节 
+h = hmac.new(key, message, digestmod='MD5')
+# 如果消息很长，可以多次调用h.update(msg)
+h.hexdigest()
+```
+- Hmac算法：Keyed-Hashing for Message Authentication。它通过一个标准算法，在计算哈希的过程中，把key混入计算过程中。
+#### itertools
+- import itertools
+	> itertools模块提供的全部是处理迭代功能的函数，它们的返回值不是list，而是Iterator，只有用for循环迭代的时候才真正计算
+- cs = itertools.cycle('ABC') 把传入的一个序列无限重复下去
+- ns = itertools.repeat('A', 3) 把一个元素无限重复下去，不过如果提供第二个参数就可以限定重复次数
+- ch = itertools.chain('ABC', 'XYZ') 把一组迭代对象串联起来，形成一个更大的迭代器
