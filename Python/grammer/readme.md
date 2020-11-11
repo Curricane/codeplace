@@ -1014,3 +1014,37 @@ h.hexdigest()
 - cs = itertools.cycle('ABC') 把传入的一个序列无限重复下去
 - ns = itertools.repeat('A', 3) 把一个元素无限重复下去，不过如果提供第二个参数就可以限定重复次数
 - ch = itertools.chain('ABC', 'XYZ') 把一组迭代对象串联起来，形成一个更大的迭代器
+#### contexlib
+- from contexlib import contextmanager
+	> @contextmanager这个decorator接受一个generator，用yield语句把with ... as var把变量输出出去，然后，with语句就可以正常地工作了
+	```python
+	@contextmanager
+	def tag(name):
+		print("<%s>" % name)
+		yield
+		print("</%s>" % name)
+
+	with tag("h1"):
+		print("hello")
+		print("world")
+	<h1>
+	hello
+	world
+	</h1>
+	代码的执行顺序是：
+	with语句首先执行yield之前的语句，因此打印出<h1>；
+	yield调用会执行with语句内部的所有语句，因此打印出hello和world；
+	最后执行yield之后的语句，打印出</h1>。
+	因此，@contextmanager让我们通过编写generator来简化上下文管理。
+	```
+- from contextlib import closing
+	> 把任意对象变为上下文对象，并支持with语句
+	```python
+	closing也是一个经过@contextmanager装饰的generator，这个generator编写起来其实非常简单：
+	@contextmanager
+	def closing(thing):
+		try:
+			yield thing
+		finally:
+			thing.close()
+	```
