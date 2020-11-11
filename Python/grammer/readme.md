@@ -881,3 +881,51 @@ t2.join()
 #### 分布式进程
 - 在Thread和Process中，应当优选Process，因为Process更稳定，而且，Process可以分布到多台机器上，而Thread最多只能分布到同一台机器的多个CPU上。
 - https://www.liaoxuefeng.com/wiki/1016959663602400/1017631559645600
+### 常见模块
+#### datetime
+- datetime是模块，datetime模块还包含一个datetime类，通过from datetime import datetime导入的才是datetime这个类
+- print(datetime.now()) # 获取当前datetime
+```python
+2020-11-10 17:11:53.944677
+```
+- timestamp
+	> Python的timestamp是一个浮点数，整数位表示秒
+	```python
+	now = datetime.now()
+	timestamp1 = now.timestamp()
+	```
+- timestamp转换为datetime
+	> datetime.fromtimestamp(t)
+- str转换为datetime
+```python
+cday = datetime.strptime('2015-6-1 18:19:59', '%Y-%m-%d %H:%M:%S')
+```
+- datetime转换为str
+	> print(now.strftime('%a, %b %d %H:%M'))
+- datetime加减
+```python
+from datetime import datetime, timedelta
+now = datetime.now()
+print(now)
+print(now - timedelta(hours=1))
+2020-11-11 09:24:41.983794
+2020-11-11 08:24:41.983794
+```
+- 时区转换 datetime.replace(tzinfo=int(xxx))
+```python 
+def to_timestamp(dt_str, tz_str):
+    #获取时区信息
+    m = re.match(r'UTC([+|-]\d+):(\d+)', tz_str)
+    hour = int(m.group(1))
+    minu = int(m.group(2))
+    #生成当前时间，并设置时区
+    now = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+    tz_info = timezone(timedelta(hours=hour, minutes=minu))
+    x = now.replace(tzinfo=tz_info)
+    return x.timestamp()
+t1 = to_timestamp('2015-6-1 08:10:30', 'UTC+7:00')
+assert t1 == 1433121030.0, t1
+
+t2 = to_timestamp('2015-5-31 16:10:30', 'UTC-09:00')
+assert t2 == 1433121030.0, t2
+```
