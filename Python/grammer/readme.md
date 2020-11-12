@@ -1048,3 +1048,108 @@ h.hexdigest()
 		finally:
 			thing.close()
 	```
+### 异步I/O
+- 当代码需要执行一个耗时的IO操作时，它只发出IO指令，并不等待IO结果，然后就去执行其他代码了。一段时间后，当IO返回结果时，再通知CPU进行处理。
+- 同步IO模型的代码是无法实现异步IO模型的
+- 异步IO模型需要一个消息循环，在消息循环中，主线程不断地重复“读取消息-处理消息”这一过程
+- 在异步IO模型下，一个线程就可以同时处理多个IO请求，并且没有切换线程的操作
+#### 协程Coroutine
+- 协程，又称微线程，纤程
+- 子程序与协程
+	- 子程序
+		> 子程序，或者称为函数，在所有语言中都是层级调用，比如A调用B，B在执行过程中又调用了C，C执行完毕返回，B执行完毕返回，最后是A执行完毕;
+		> 一个线程就是执行一个子程序;
+		> 一个入口，一次返回，调用顺序是明确的
+	- 协程
+		> 内部可中断, 然后转而执行别的子程序，在适当的时候再返回来接着执行, 不是函数调用, 有点类似CPU的中断
+		> 一个线程
+	```python
+	def A():
+		print('1')
+		print('2')
+		print('3')
+
+	def B():
+		print('x')
+		print('y')
+		print('z')
+	A()
+	B()
+	# 子程序运行结果（一个线程）
+	123xyz
+	# 协程运行结果(一个线程)
+	12xy3z
+	```
+- 协程的优势
+	> 极高的执行效率.没有线程切换的开销
+	> 不需要多线程的锁机制，因为只有一个线程，也不存在同时写变量冲突，在协程中控制共享资源不加锁，`只需要判断状态就好了`.
+	> 怎么利用多核CPU呢？最简单的方法是多进程+协程
+- Python对协程的支持是通过`generator`实现的。
+	> Python的`yield`不但可以返回一个值，它还可以接收调用者发出的参数
+	```python
+	def consumer():
+		r = ''
+		while True:
+			n = yield r
+			if not n:
+				return
+			print('[CONSUMER] Consuming %s...' % n)
+			r = '200 OK'
+
+	def produce(c):
+		c.send(None)
+		n = 0
+		while n < 5:
+			n = n + 1
+			print('[PRODUCER] Producing %s...' % n)
+			r = c.send(n)
+			print('[PRODUCER] Consumer return: %s' % r)
+		c.close()
+
+	c = consumer()
+	produce(c)
+	'''
+	注意到consumer函数是一个generator，把一个consumer传入produce后:
+	首先调用c.send(None)启动生成器；
+	然后，一旦生产了东西，通过c.send(n)切换到consumer执行
+	consumer通过yield拿到消息，处理，又通过yield把结果传回；
+	produce拿到consumer处理的结果，继续生产下一条消息；
+	produce决定不生产了，通过c.close()关闭consumer，整个过程结束
+
+	return的确是跳出函数，这是为consumer生成器提供了另一种终止方式c.send(None)。
+	当生成器第一次调用c.send(None)时，作用是预激，即启动生成器，效果等同于next(c)，consumer函数执行到yield r后停止，生成第一个值''，只有在生成器启动之后，调用send方法才会赋值给n；
+	当生成器第二次及以后调用c.send(None)时，作用是终止生成器，效果等同于c.close()，但有所不同的是，c.send(None)会抛出StopIteration异常，且异常中包含返回值，而c.close()方法则不会抛出异常。
+	'''
+	```
+#### asyncio
+- asyncio是Python 3.4版本引入的标准库，直接内置了对异步IO的支持。
+- asyncio的编程模型就是一个消息循环。我们从asyncio模块中直接获取一个EventLoop的引用，然后把需要执行的协程扔到EventLoop中执行，就实现了异步IO。
+- 异步操作需要在coroutine中通过yield from完成
+- 多个coroutine可以封装成一组Task然后并发执行
+```python
+import asyncio
+
+@asyncio.coroutine
+def hello():
+    print("Hello world!")
+    # 异步调用asyncio.sleep(1):
+    r = yield from asyncio.sleep(1)
+    print("Hello again!")
+
+# 获取EventLoop:
+loop = asyncio.get_event_loop()
+# 执行coroutine
+loop.run_until_complete(hello())
+loop.close() #关了之后不好打开
+```
+#### async/await
+- 为了简化并更好地标识异步IO，从Python 3.5开始引入了新的语法async和await，可以让coroutine的代码更简洁易读。
+- async和await是针对coroutine的新语法，要使用新的语法，只需要做两步简单的替换
+	> 把@asyncio.coroutine替换为async；
+	> 把yield from替换为await。
+	```python
+	async def Hello():
+		print('first hello')
+		r = await asyncio.sleep(1)
+		print('second hello')
+	```
