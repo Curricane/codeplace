@@ -16,7 +16,8 @@ from datetime import datetime
 from aiohttp import web
 
 def index(request):
-    return web.Response(body=b'<h1>Awesome</h1>')
+    # 需要加headers不然不会正常显示
+    return web.Response(body='<h1>Awesome</h1>', headers={'content-type': 'text/html'}) 
 
 @asyncio.coroutine
 def init(loop):
