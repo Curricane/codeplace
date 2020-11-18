@@ -82,7 +82,7 @@ class ModelMetaclass(type):
                 # 找到主键
                 primaryKey = k
             else:
-                # 没有主键，助于fields
+                # 没有主键，属于fields
                 fields.append(k)
         if not primaryKey:
             raise RuntimeError('No Primary key')
@@ -98,7 +98,7 @@ class ModelMetaclass(type):
         attrs['__fields__'] = fields
         attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escaped_fields), tableName) # 该模型的select 语句
         attrs['__insert__'] = 'insert into `%s` (%s, `%s`) value (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
-        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '%s=?' % (mappings.get(f).name or f), fields)), primaryKey)
+        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '%s=?' % (mappings.get(f).name if isinstance(mappings.get(f), Field) else f), fields)), primaryKey)
         attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (tableName, primaryKey)
         return type.__new__(cls, name, bases, attrs)
 
@@ -116,7 +116,7 @@ class Model(dict, metaclass=ModelMetaclass):
     def getValue(self, key):
         return getattr(self, key, None)
     
-    def getValueOrDefalue(self, key):
+    def getValueOrDefault(self, key):
         value = getattr(self, key, None)
         if value is None:
             field = self.__mappings__[key]
