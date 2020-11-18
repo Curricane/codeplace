@@ -1,5 +1,7 @@
 import asyncio, logging, aiomysql
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(process)d %(thread)d %(levelname)s [%(funcName)s]: %(message)s')
+
 def log(sql, args=()):
     logging.info('SQL: %s' % sql)
 
@@ -47,6 +49,7 @@ async def execute(sql, args):
             cur = await conn.cursor()
             await cur.execute(sql.replace('?', '%s'), args)
             affected = cur.rowcount #获取行数
+            await cur.close()
         except BaseException as _:
             # 将错误抛出， 不管
             raise
@@ -66,7 +69,7 @@ class ModelMetaclass(type):
             return type.__new__(cls, name, bases, attrs)
         # 获取table名称
         tableName = attrs.get('__table__', None) or name
-        logging.info('found model: %s (table: %s' % (name, tableName))
+        logging.info('found model: %s (table: %s)' % (name, tableName))
         # 获取所有的Field和主键名
         mappings = dict()
         fields = []
@@ -79,11 +82,11 @@ class ModelMetaclass(type):
                     # 主键重复，模型有误
                     if primaryKey:
                         raise RuntimeError('Duplicate primary key for field: %s' % k) 
-                # 找到主键
-                primaryKey = k
-            else:
-                # 没有主键，属于fields
-                fields.append(k)
+                    # 找到主键
+                    primaryKey = k
+                else:
+                    # 没有主键，属于fields
+                    fields.append(k)
         if not primaryKey:
             raise RuntimeError('No Primary key')
 
@@ -97,8 +100,9 @@ class ModelMetaclass(type):
         attrs['__primary_key__'] = primaryKey
         attrs['__fields__'] = fields
         attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escaped_fields), tableName) # 该模型的select 语句
-        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) value (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
-        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '%s=?' % (mappings.get(f).name if isinstance(mappings.get(f), Field) else f), fields)), primaryKey)
+        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
+        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '%s=?' % (mappings.get(f).name or f), fields)), primaryKey)
+        # attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '%s=?' % (mappings.get(f).name if isinstance(mappings.get(f), Field) else f), fields)), primaryKey)
         attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (tableName, primaryKey)
         return type.__new__(cls, name, bases, attrs)
 
@@ -123,7 +127,7 @@ class Model(dict, metaclass=ModelMetaclass):
             if field.default is not None:
                 # field是函数还是值
                 value = field.default() if callable(field.default) else field.default
-                logging.debug('using defalut value for %s: %s' % (key, str(value)))
+                logging.debug('using default value for %s: %s' % (key, str(value)))
                 setattr(self, key, value)
         return value
     # 往 Model类添加class方法， 就可以让所有子类调用class方法
@@ -149,7 +153,7 @@ class Model(dict, metaclass=ModelMetaclass):
                 sql.append('?, ?')
                 args.extend(limit)
             else:
-                raise ValueError('Invalid limit value: %s', str(limit))
+                raise ValueError('Invalid limit value: %s' % str(limit))
         rs = await select(' '.join(sql), args)
         return [cls(**r) for r in rs]
 

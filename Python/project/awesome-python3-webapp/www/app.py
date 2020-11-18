@@ -15,6 +15,8 @@ from datetime import datetime
 
 from aiohttp import web
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(process)d %(thread)d %(levelname)s [%(funcName)s]: %(message)s')
+
 def index(request):
     # 需要加headers不然不会正常显示
     return web.Response(body='<h1>Awesome</h1>', headers={'content-type': 'text/html'}) 
