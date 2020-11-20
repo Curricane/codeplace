@@ -26,12 +26,12 @@ class APIValueError(APIError):
     def __init__(self, field, message=''):
         super(APIValueError, self).__init__('value: invalid', field, message)
 
-class APIResoureNotFoundError(APIError):
+class APIResourceNotFoundError(APIError):
     '''
     the data specifies the resource name.
     '''
     def __init__(self, field, message=''):
-        super(APIResoureNotFoundError, self).__init__('value:not found', field, message)
+        super(APIResourceNotFoundError, self).__init__('value:not found', field, message)
 
 class APIPermissionError(APIError):
     '''
