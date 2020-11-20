@@ -27,7 +27,7 @@ class Dict(dict):
 
 def merge(defaults, override):
     r = {}
-    for k, v in defaults.iterms():
+    for k, v in defaults.items():
         if k in override:
             if isinstance(v, dict):
                 r[k] = merge(v, override[k])
@@ -39,7 +39,7 @@ def merge(defaults, override):
 
 def toDict(d):
     D = Dict()
-    for k, v in d.iterms():
+    for k, v in d.items():
         D[k] = toDict(v) if isinstance(v, dict) else v
     return D
 
@@ -52,3 +52,11 @@ except ImportError:
     pass
 
 configs = toDict(configs)
+
+def test_config():
+    import config_override
+    r = merge(config_default.configs, config_override.configs)
+    print('test_config: r is:', r)
+
+if __name__ == '__main__':
+    test_config()
